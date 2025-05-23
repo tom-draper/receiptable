@@ -8,7 +8,6 @@ export const handler: Handlers = {
         // Perform server-side fetch to get UUID
         const data: { uuid: string | null, count: number | null } = { uuid: null, count: null };
         try {
-            // const url = Deno.env.get("ENV") === "development" ? "http://localhost:8000/api/v1/user" : "https://receiptable.dev/api/v1/user";
             const response = await fetch(serverUrl + "/api/v1/user", {
                 method: "POST",
             });

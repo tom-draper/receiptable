@@ -1,0 +1,100 @@
+<div
+  style="width: fit-content; font-family: {{style.fontFamily}}; background: {{style.backgroundColor}}; border-radius: {{style.borderRadius}}; color: {{style.color}}; font-size: {{style.fontSize}}px; line-height: {{style.lineSpacing}}; word-wrap: break-word; box-sizing: content-box; {{receiptBorderCSS
+    style.borderColor
+  }}"
+>
+  <div
+    id="receipt-content"
+    style="width: {{style.width}}ch; display: flex; position: relative;"
+  >
+
+    {{#if content.barcode}}
+      <div
+        style="display: flex; align-items: center; text-align: center; justify-content: center; min-width: 50px; border-right: 1px dashed #999; width: 15%; padding: 20px;"
+      >
+        {{#if content.barcode.barcode}}
+          <div style="transform: rotate(90deg); transform-origin: center;">
+            <div style="">
+              {{{barcodeSvg
+                content.barcode.barcode
+                (fallback style.barcodeColor style.color)
+                content.barcode.barcodeHeight
+              }}}
+            </div>
+            {{#if content.barcode.showBarcode}}
+              <div
+                style="margin-top: 8px; {{barcodeFontSizeCSS style.fontSize}};"
+              >
+                <p style="margin: 4px 0;">{{content.barcode.barcode}}</p>
+              </div>
+            {{/if}}
+          </div>
+        {{else}}
+          {{#if content.barcode.qrCode}}
+            <div style="">
+              {{{qrCodeSvg
+                content.barcode.qrCode
+                (fallback style.qrCodeColor style.color)
+                content.barcode.qrCodeWidth
+              }}}
+            </div>
+          {{/if}}
+        {{/if}}
+      </div>
+    {{/if}}
+
+    {{#if content.store.image}}
+      <img
+        style="opacity: 0.3; position: absolute; z-index: 0; right: 0; bottom: 0; width: {{content.store.image.width}}%; {{grayscaleFilterCSS
+          content.store.image.grayscale
+        }}"
+        src="{{content.store.image.url}}"
+        alt="{{content.store.image.alt}}"
+      />
+    {{/if}}
+
+    <div
+      style="flex-grow: 1; margin: 20px 2ch; text-align: left; position:relative; z-index: 10;"
+    >
+      <div style="text-align: left; margin-bottom: 10px;">
+
+        <h1 style="margin: 0; font-size: 1.5em;">
+          {{#if content.store.name}}
+            {{content.store.name}}
+          {{else}}
+            RECEIPT
+          {{/if}}
+        </h1>
+      </div>
+
+      {{#if content.info}}
+        <div style="{{footerFontSizeCSS style.fontSize}};">
+          {{#each content.info}}
+            <p style="margin: 4px 0;">{{this}}</p>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{#if content.preFooter}}
+        <div style="margin: 20px 0; {{footerFontSizeCSS style.fontSize}};">
+          {{#each content.preFooter}}
+            <p style="margin: 4px 0;">{{this}}</p>
+          {{/each}}
+        </div>
+      {{/if}}
+
+      {{#if content.footer}}
+        <div
+          style="padding-top: 10px; margin-top: 15px; {{footerFontSizeCSS
+            style.fontSize
+          }};"
+        >
+          {{#each content.footer}}
+            <p style="margin: 4px 0;">{{this}}</p>
+          {{/each}}
+        </div>
+      {{/if}}
+    </div>
+
+  </div>
+</div>

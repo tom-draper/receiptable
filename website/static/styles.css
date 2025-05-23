@@ -1,0 +1,283 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: monospace;
+    background-color: #f9f9f9;
+    color: #484848;
+    margin: 0;
+}
+
+@keyframes receiptAppear {
+    from {
+        transform: translateY(50px);
+        opacity: 0.7;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-receipt-appear {
+    animation: receiptAppear 0.35s ease-in-out forwards;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.language-javascript,
+.language-json,
+.language-python,
+.language-bash,
+.language-html,
+.operator {
+    background-color: #f5f5f5 !important;
+}
+
+.markdown-body h1 {
+    font-size: 21px;
+    font-weight: 500;
+}
+
+.markdown-body h2 {
+    font-size: 21px;
+    font-weight: 500;
+    margin-top: 1em;
+}
+
+.markdown-body h3 {
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 1em;
+}
+
+.markdown-body h4 {
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 1em;
+}
+
+.markdown-body th {
+    text-align: left;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.markdown-body table,
+.markdown-body pre,
+.markdown-body p {
+    margin-top: 0.5em;
+}
+
+.markdown-body th,
+.markdown-body td {
+    padding: 0 1em 0 0;
+}
+
+
+.markdown-body hr {
+    margin-top: 1em;
+}
+
+.markdown-body code,
+.markdown-body pre, 
+.markdown-body .language-javascript {
+    color: #484848 !important;
+    background: transparent !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+}
+
+.markdown-body pre {
+    padding: 0.5em 0 !important;
+}
+
+.markdown-body p,
+.markdown-body code,
+.markdown-body pre,
+.markdown-body td,
+.markdown-body th {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    /* for Internet Explorer 10+ */
+    scrollbar-width: none;
+    /* for Firefox */
+}
+
+@media screen and (max-width: 1600px) {
+    .playground-content {
+        margin: 0 10%;
+    }
+
+    .code-example {
+        margin-right: 1.5em !important;
+        border-radius: 0 !important;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .playground-content {
+        margin: 0 6%;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    .playground-content {
+        margin: 0 2em;
+    }
+
+    .code-example {
+        margin-right: 20px;
+    }
+
+    nav>div {
+        margin: 0 1rem !important;
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .playground-flex {
+        flex-direction: column;
+        height: auto;
+    }
+    .playground-content {
+        margin: 0;
+    }
+    .code-example {
+        margin-right: 0 !important;
+        border-radius: 0 !important;
+        margin-bottom: 1em !important;
+    }
+    .code-example > div > pre {
+        padding-top: 5em !important;
+    }
+    .receipt-placeholder {
+        place-items: start;
+        height: auto;
+        /* width: 100%; */
+        /* justify-items: center; */
+    }
+
+    #pricing-receipt {
+        box-sizing: inherit !important;
+        height: auto !important;
+    }
+
+    #pricing, #actions {
+        flex-direction: column;
+    }
+
+    #pricing {
+        gap: 2rem !important; 
+    }
+}
+
+@media screen and (max-width: 500px) {
+    #receipt {
+        font-size: 13px !important;
+    }
+    #pricing-receipt, #pricing-receipt > a {
+        width: 100% !important;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    #receipt {
+        width: 42ch !important;
+    }
+}
+
+@media screen and (max-width: 430px) {
+    #receipt {
+        width: 43ch !important;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    #receipt {
+        width: 40ch !important;
+    }
+}
+
+@media screen and (max-width: 390px) {
+    #receipt {
+        width: 39ch !important;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    #receipt {
+        width: 38ch !important;
+    }
+}
+
+@media screen and (max-width: 370px) {
+    #receipt {
+        width: 37ch !important;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    #receipt {
+        width: 36ch !important;
+    }
+}
+
+@media screen and (max-width: 350px) {
+    #receipt {
+        width: 35ch !important;
+    }
+}
+
+@media screen and (max-width: 340px) {
+    #receipt {
+        width: 34ch !important;
+    }
+}
+
+@media screen and (max-width: 330px) {
+    #receipt {
+        width: 33ch !important;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    #receipt {
+        width: 32ch !important;
+    }
+}
+
+@media screen and (max-width: 310px) {
+    #receipt {
+        width: 31ch !important;
+    }
+}
+
+@media screen and (max-width: 300px) {
+    #receipt {
+        width: 30ch !important;
+    }
+}

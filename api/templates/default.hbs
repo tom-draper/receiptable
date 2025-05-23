@@ -1,0 +1,182 @@
+<div id="receipt"
+  style="width: fit-content; padding: 1.5rem; font-family: {{style.fontFamily}}; background: {{style.backgroundColor}}; border-radius: {{style.borderRadius}}; color: {{style.color}}; font-size: {{style.fontSize}}px; line-height: {{style.lineSpacing}}; word-wrap: break-word; box-sizing: content-box; {{receiptBorderCSS style.borderColor}}">
+  <div id="receipt-content" style="width: {{style.width}}ch;">
+
+    <div style="text-align: center; margin-bottom: 10px;">
+      {{#if content.store.image}}
+      <img
+        style="width: {{content.store.image.width}}%; margin-bottom: 20px; {{grayscaleFilterCSS content.store.image.grayscale}}"
+        src="{{content.store.image.url}}" alt="{{content.store.image.alt}}">
+      {{/if}}
+      <h1 style="margin: 0; font-size: 1.5em;">
+        {{#if content.store.name}}
+        {{content.store.name}}
+        {{else}}
+        RECEIPT
+        {{/if}}
+      </h1>
+      {{#if content.store.address}}
+      <p style="margin: 4px 0;">{{content.store.address}}</p>
+      {{/if}}
+      {{#if content.store.phone}}
+      <p style="margin: 4px 0;">Tel: {{content.store.phone}}</p>
+      {{/if}}
+      {{#if content.store.website}}
+      <p style="margin: 4px 0;">{{content.store.website}}</p>
+      {{/if}}
+    </div>
+
+    <div style="margin: 15px 0;">
+      {{#if content.orderNumber}}
+      <p style="margin: 4px 0;">Order #: {{content.orderNumber}}</p>
+      {{/if}}
+      {{#if content.date}}
+      <p style="margin: 4px 0;">Date: {{content.date}}</p>
+      {{/if}}
+      {{#if content.time}}
+      <p style="margin: 4px 0;">Time: {{content.time}}</p>
+      {{/if}}
+      {{#if content.cashier}}
+      <p style="margin: 4px 0;">Cashier: {{content.cashier}}</p>
+      {{/if}}
+    </div>
+
+    {{#if content.customer}}
+    <div style="margin: 15px 0;">
+      <p style="margin: 0; font-weight: bold;">Customer:</p>
+      {{#if content.customer.name}}
+      <p style="margin: 4px 0;">{{content.customer.name}}</p>
+      {{/if}}
+      {{#if content.customer.address}}
+      <p style="margin: 4px 0;">{{content.customer.address}}</p>
+      {{/if}}
+      {{#if content.customer.phone}}
+      <p style="margin: 4px 0;">Tel: {{content.customer.phone}}</p>
+      {{/if}}
+      {{#if content.customer.email}}
+      <p style="margin: 4px 0;">Email: {{content.customer.email}}</p>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    <div style="margin: 15px 0;">
+      <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p>
+      <div style="display: flex; justify-content: space-between; font-weight: bold; margin: 8px 0;">
+        <div>Item</div>
+        <div>Price</div>
+      </div>
+      <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p>
+
+      {{#if content.items}}
+      {{#each content.items}}
+      <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+        <div>{{this.quantity}} x {{this.name}}</div>
+        <div>{{formatCurrency (totalPrice this) ../content.currency}}{{#if this.discount}} (-{{formatCurrency
+          this.discount ../content.currency false}}){{/if}}</div>
+      </div>
+      {{/each}}
+      {{else}}
+      <p style="margin: 4px 0; text-align: center;">No items</p>
+      {{/if}}
+
+      <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p>
+    </div>
+
+    <div style="margin: 15px 0;">
+      <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+        <div>Subtotal:</div>
+        <div>{{formatCurrency (subtotal content.items) content.currency}}</div>
+      </div>
+
+      {{#if content.tax}}
+      <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+        <div>Tax {{#if content.tax.rate}}({{content.tax.rate}}%){{/if}}:</div>
+        <div>{{formatCurrency (taxAmount content.items content.tax) content.currency}}</div>
+      </div>
+      {{/if}}
+
+      {{#if content.tip}}
+      <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+        <div>Tip:</div>
+        <div>{{formatCurrency content.tip content.currency}}</div>
+      </div>
+      {{/if}}
+
+      <p style="margin: 8px 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{starLine style.width}}</p>
+
+      <div style="display: flex; justify-content: space-between; font-weight: bold; margin: 4px 0;">
+        <div>TOTAL:</div>
+        <div>{{formatCurrency (total content.items content.tax content.tip) content.currency}}</div>
+      </div>
+    </div>
+
+    {{#if content.paymentMethod}}
+    <div style="margin: 15px 0;">
+      <p style="margin: 4px 0;">Payment Method: {{content.paymentMethod}}</p>
+      {{#if content.paymentDetails}}
+      {{#if content.paymentDetails.cardType}}
+      <p style="margin: 4px 0;">{{content.paymentDetails.cardType}} ****{{content.paymentDetails.lastFour}}</p>
+      {{/if}}
+      {{/if}}
+      <p style="margin: 4px 0;">Amount Paid: {{formatCurrency (total content.items content.tax content.tip)
+        content.currency}}</p>
+      <p style="margin: 4px 0;">Change Due: {{formatCurrency 0 content.currency}}</p>
+    </div>
+    {{/if}}
+
+    <div style="margin-top: 20px; text-align: center;">
+      <p style="margin: 8px 0; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{starLine style.width}}</p>
+      {{#if content.thankYou}}
+      <p style="margin: 8px 0;">{{content.thankYou}}</p>
+      {{/if}}
+
+      {{#if content.info}}
+      <div style="text-align: center; {{footerFontSizeCSS style.fontSize}};">
+        {{#each content.info}}
+        <p style="margin: 4px 0;">{{this}}</p>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if content.barcode}}
+      {{#if content.barcode.barcode}}
+      <div style="text-align: center; margin: 20px 0;">
+        <div>
+          {{{barcodeSvg content.barcode.barcode (fallback style.barcodeColor style.color)
+          content.barcode.barcodeHeight}}}
+        </div>
+        {{#if content.barcode.showBarcode}}
+        <div style="margin-top: 8px; {{barcodeFontSizeCSS style.fontSize}};">
+          <p style="margin: 4px 0;">{{content.barcode.barcode}}</p>
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      {{#if content.barcode.qrCode}}
+      <div style="text-align: center; margin: 20px 0;">
+        {{{qrCodeSvg content.barcode.qrCode (fallback style.qrCodeColor style.color) content.barcode.qrCodeWidth}}}
+      </div>
+      {{/if}}
+      {{/if}}
+
+      {{#if content.preFooter}}
+      <div style="margin: 20px 0; text-align: center; {{footerFontSizeCSS style.fontSize}};">
+        {{#each content.preFooter}}
+        <p style="margin: 4px 0;">{{this}}</p>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if content.footer}}
+      <div
+        style="border-top: 1px dashed #999; padding-top: 10px; margin-top: 15px; text-align: center; {{footerFontSizeCSS style.fontSize}};">
+        {{#each content.footer}}
+        <p style="margin: 4px 0;">{{this}}</p>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+
+  </div>
+</div>

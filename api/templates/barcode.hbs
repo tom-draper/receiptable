@@ -1,0 +1,67 @@
+<div id="receipt"
+  style="width: fit-content; padding: 1.5rem; font-family: {{style.fontFamily}}; background: {{style.backgroundColor}}; border-radius: {{style.borderRadius}}; color: {{style.color}}; font-size: {{style.fontSize}}px; line-height: {{style.lineSpacing}}; word-wrap: break-word; box-sizing: content-box; text-align: center; {{receiptBorderCSS style.borderColor}}">
+  <div id="receipt-content" style="width: {{style.width}}ch;">
+
+    <div style="margin-bottom: 10px;">
+      {{#if content.store.image}}
+      <img
+        style="width: {{content.store.image.width}}%; margin-bottom: 20px; {{grayscaleFilterCSS content.store.image.grayscale}}"
+        src="{{content.store.image.url}}" alt="{{content.store.image.alt}}">
+      {{/if}}
+      <h1 style="margin: 0; font-size: 1.5em;">
+        {{#if content.store.name}}
+        {{content.store.name}}
+        {{else}}
+        RECEIPT
+        {{/if}}
+      </h1>
+    </div>
+
+    {{#if content.info}}
+    <div style="{{footerFontSizeCSS style.fontSize}};">
+      {{#each content.info}}
+      <p style="margin: 4px 0;">{{this}}</p>
+      {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if content.barcode}}
+    {{#if content.barcode.barcode}}
+    <div style="margin: 20px 0;">
+      <div>
+        {{{barcodeSvg content.barcode.barcode (fallback style.barcodeColor style.color) content.barcode.barcodeHeight}}}
+      </div>
+      {{#if content.barcode.showBarcode}}
+      <div style="margin-top: 8px; {{barcodeFontSizeCSS style.fontSize}};">
+        <p style="margin: 4px 0;">{{content.barcode.barcode}}</p>
+      </div>
+      {{/if}}
+    </div>
+    {{/if}}
+
+    {{#if content.barcode.qrCode}}
+    <div style="margin: 20px 0;">
+      {{{qrCodeSvg content.barcode.qrCode (fallback style.qrCodeColor style.color) content.barcode.qrCodeWidth}}}
+    </div>
+    {{/if}}
+    {{/if}}
+
+    {{#if content.preFooter}}
+    <div style="margin: 20px 0; {{footerFontSizeCSS style.fontSize}};">
+      {{#each content.preFooter}}
+      <p style="margin: 4px 0;">{{this}}</p>
+      {{/each}}
+    </div>
+    {{/if}}
+
+    {{#if content.footer}}
+      <div
+        style="border-top: 1px dashed #999; padding-top: 10px; margin-top: 15px; {{footerFontSizeCSS style.fontSize}};">
+        {{#each content.footer}}
+          <p style="margin: 4px 0;">{{this}}</p>
+        {{/each}}
+      </div>
+    {{/if}}
+  </div>
+</div>
+</div>

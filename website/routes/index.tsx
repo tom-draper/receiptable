@@ -23,6 +23,9 @@ export default function Home() {
 				<InteractiveExample />
 				<Usage />
 				{/* <Pricing /> */}
+				<div class="text-center text-[16px]">
+					<a href="https://receiptable.dev/sign-up">Grab your API Key</a>
+				</div>
 				<Actions />
 				<Footer />
 			</div>

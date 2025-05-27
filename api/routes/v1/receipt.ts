@@ -4,87 +4,123 @@ import { defaultReceiptContentExample, exampleTemplates } from "../../lib/exampl
 export type Payload = {
     template?: 'default';
     output?: 'html' | 'pdf' | 'image' | 'png' | 'jpeg' | 'jpg';
-    content: ReceiptContent
-    style?: ReceiptStyle
-}
+    content: ReceiptContent;
+    style?: ReceiptStyle;
+};
 
-export async function handleReceiptExample(req: Request) {
+type OutputFormat = 'html' | 'pdf' | 'png' | 'jpeg';
+
+const outputMappings: Record<string, OutputFormat> = {
+    'html': 'html',
+    'pdf': 'pdf',
+    'image': 'png',
+    'png': 'png',
+    'jpeg': 'jpeg',
+    'jpg': 'jpeg'
+};
+
+const contentTypes: Record<OutputFormat, string> = {
+    'html': 'text/html',
+    'pdf': 'application/pdf',
+    'png': 'image/png',
+    'jpeg': 'image/jpeg'
+};
+
+export async function handleReceiptExample(req: Request): Promise<Response> {
     const params = new URL(req.url).searchParams;
     const template = params.get('template') || 'default';
+    const outputParam = params.get('output') || 'html';
 
     const { content, style } = exampleTemplates[template] || defaultReceiptContentExample;
 
-    const html = await htmlReceipt(content, style, template); // generate your dynamic HTML
+    const payload: Payload = {
+        content,
+        style,
+        template: template as 'default',
+        output: outputParam as Payload['output']
+    };
 
-    return new Response(html, {
-        status: 200,
-        headers: { "Content-Type": "text/html" },
-    });
+    return await generateReceiptResponse(payload);
 }
 
-export async function handleReceipt(req: Request) {
-    let body: Payload;
+export async function handleReceipt(req: Request): Promise<Response> {
+    let payload: Payload;
+    
     try {
-        body = await req.json(); // Parse the body as JSON
+        payload = await req.json();
     } catch (error) {
         console.error("Error parsing JSON:", error);
-        return new Response(JSON.stringify({ error: "Invalid JSON format." }), {
-            status: 400,
-            headers: { "Content-Type": "application/json" },
-        });
+        return createErrorResponse("Invalid JSON format.", 400);
     }
 
-    const output = body.output || "html"; // Default to "html" if not provided
+    console.log(payload);
+    return await generateReceiptResponse(payload);
+}
 
-    console.log(body);
-
-    switch (output) {
-        case "pdf":
-            return await handleReceiptPDF(body);
-        case "image":
-        case "png":
-            return await handleReceiptImage(body, "png");
-        case "jpeg":
-        case "jpg":
-            return await handleReceiptImage(body, "jpeg");
-        case "html":
-            return handleReceiptHTML(body);
-        default:
-            return handleReceiptHTML(body);
+async function generateReceiptResponse(payload: Payload): Promise<Response> {
+    const outputFormat = normalizeOutputFormat(payload.output);
+    
+    try {
+        switch (outputFormat) {
+            case 'html':
+                return await createHTMLResponse(payload);
+            case 'pdf':
+                return await createPDFResponse(payload);
+            case 'png':
+            case 'jpeg':
+                return await createImageResponse(payload, outputFormat);
+            default:
+                return await createHTMLResponse(payload);
+        }
+    } catch (error) {
+        console.error(`Error generating ${outputFormat} receipt:`, error);
+        return createErrorResponse(`Failed to generate ${outputFormat} receipt.`, 500);
     }
 }
 
+function normalizeOutputFormat(output?: string): OutputFormat {
+    if (!output) return 'html';
+    return outputMappings[output.toLowerCase()] || 'html';
+}
 
-export async function handleReceiptHTML(body: Payload) {
-    const html = await htmlReceipt(body.content, body.style, body.template); // generate your dynamic HTML
-
+async function createHTMLResponse(payload: Payload): Promise<Response> {
+    const html = await htmlReceipt(payload.content, payload.style, payload.template);
+    
     return new Response(html, {
         status: 200,
-        headers: { "Content-Type": "text/html" },
+        headers: { "Content-Type": contentTypes.html }
     });
 }
 
-
-export async function handleReceiptImage(body: Payload, format: string = 'png') {
-    const imageBuffer = await imageReceipt(body.content, body.style, body.template, format); // generate your dynamic HTML
-
+async function createImageResponse(payload: Payload, format: 'png' | 'jpeg'): Promise<Response> {
+    const imageBuffer = await imageReceipt(payload.content, payload.style, payload.template, format);
+    
     return new Response(imageBuffer, {
         status: 200,
         headers: {
-            "Content-Type": `image/${format}`,
-            "Content-Disposition": `inline; filename=receipt.${format}`,
-        },
+            "Content-Type": contentTypes[format],
+            "Content-Disposition": `inline; filename=receipt.${format}`
+        }
     });
 }
 
-export async function handleReceiptPDF(body: Payload) {
-    const pdfBuffer = await htmlReceipt(body.content, body.style, body.template); // generate your dynamic HTML
-
+async function createPDFResponse(payload: Payload): Promise<Response> {
+    // Note: This looks like it should call a PDF generation function, not htmlReceipt
+    // You might want to create a pdfReceipt function or modify this logic
+    const pdfBuffer = await htmlReceipt(payload.content, payload.style, payload.template);
+    
     return new Response(pdfBuffer, {
         status: 200,
         headers: {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": "inline; filename=receipt.pdf",
-        },
+            "Content-Type": contentTypes.pdf,
+            "Content-Disposition": "inline; filename=receipt.pdf"
+        }
+    });
+}
+
+function createErrorResponse(message: string, status: number): Response {
+    return new Response(JSON.stringify({ error: message }), {
+        status,
+        headers: { "Content-Type": "application/json" }
     });
 }

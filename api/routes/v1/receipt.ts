@@ -1,4 +1,4 @@
-import { htmlReceipt, imageReceipt, ReceiptContent, ReceiptStyle } from "../../lib/receipt.ts";
+import { htmlReceipt, imageReceipt, pdfReceipt, ReceiptContent, ReceiptStyle } from "../../lib/receipt.ts";
 import { defaultReceiptContentExample, exampleTemplates } from "../../lib/example.ts";
 
 export type Payload = {
@@ -79,7 +79,9 @@ async function generateReceiptResponse(payload: Payload): Promise<Response> {
 }
 
 function normalizeOutputFormat(output?: string): OutputFormat {
-    if (!output) return 'html';
+    if (!output) {
+        return 'html';
+    }
     return outputMappings[output.toLowerCase()] || 'html';
 }
 
@@ -105,9 +107,7 @@ async function createImageResponse(payload: Payload, format: 'png' | 'jpeg'): Pr
 }
 
 async function createPDFResponse(payload: Payload): Promise<Response> {
-    // Note: This looks like it should call a PDF generation function, not htmlReceipt
-    // You might want to create a pdfReceipt function or modify this logic
-    const pdfBuffer = await htmlReceipt(payload.content, payload.style, payload.template);
+    const pdfBuffer = await pdfReceipt(payload.content, payload.style, payload.template);
     
     return new Response(pdfBuffer, {
         status: 200,

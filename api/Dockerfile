@@ -40,7 +40,7 @@ RUN mkdir -p /home/deno/.local/share/applications \
     && chown -R deno:deno /home/deno
 
 # Switch back to deno user for security
-USER deno
+# USER deno
 
 # Set the working directory in the container
 WORKDIR /app
@@ -49,7 +49,7 @@ WORKDIR /app
 RUN mkdir -p /app/data
 
 # Copy dependency files first for better caching
-COPY --chown=deno:deno deno.json deno.lock* ./
+COPY deno.json deno.lock* ./
 
 # Cache dependencies
 RUN deno cache deno.json
@@ -58,7 +58,7 @@ RUN deno cache deno.json
 # COPY --chown=deno:deno ./data ./data/
 
 # Copy the rest of the application files
-COPY --chown=deno:deno . .
+COPY . .
 
 # Set environment variables
 ENV DENO_ENV=production \

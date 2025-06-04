@@ -23,7 +23,7 @@
             </div>
             {{#if content.barcode.showBarcode}}
               <div
-                style="margin-top: 8px; {{barcodeFontSizeCSS style.fontSize}};"
+                style="margin-top: 8px; font-size: {{style.barcodeFontSize}}px;"
               >
                 <p style="margin: 4px 0;">{{content.barcode.barcode}}</p>
               </div>
@@ -68,7 +68,7 @@
       </div>
 
       {{#if content.info}}
-        <div style="{{footerFontSizeCSS style.fontSize}};">
+        <div style="font-size: {{style.footerFontSize}}px;">
           {{#each content.info}}
             <p style="margin: 4px 0;">{{this}}</p>
           {{/each}}
@@ -76,7 +76,7 @@
       {{/if}}
 
       {{#if content.preFooter}}
-        <div style="margin: 20px 0; {{footerFontSizeCSS style.fontSize}};">
+        <div style="margin: 20px 0; font-size: {{style.footerFontSize}}px;">
           {{#each content.preFooter}}
             <p style="margin: 4px 0;">{{this}}</p>
           {{/each}}
@@ -85,9 +85,7 @@
 
       {{#if content.footer}}
         <div
-          style="padding-top: 10px; margin-top: 15px; {{footerFontSizeCSS
-            style.fontSize
-          }};"
+          style="padding-top: 10px; margin-top: 15px; font-size: {{style.footerFontSize}}px;"
         >
           {{#each content.footer}}
             <p style="margin: 4px 0;">{{this}}</p>

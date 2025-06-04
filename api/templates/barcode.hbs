@@ -18,7 +18,7 @@
     </div>
 
     {{#if content.info}}
-    <div style="{{footerFontSizeCSS style.fontSize}};">
+    <div style="font-size: {{style.footerFontSize}}px;">
       {{#each content.info}}
       <p style="margin: 4px 0;">{{this}}</p>
       {{/each}}
@@ -32,7 +32,7 @@
         {{{barcodeSvg content.barcode.barcode (fallback style.barcodeColor style.color) content.barcode.barcodeHeight}}}
       </div>
       {{#if content.barcode.showBarcode}}
-      <div style="margin-top: 8px; {{barcodeFontSizeCSS style.fontSize}};">
+      <div style="margin-top: 8px; font-size: {{style.barcodeFontSize}}px;">
         <p style="margin: 4px 0;">{{content.barcode.barcode}}</p>
       </div>
       {{/if}}
@@ -47,7 +47,7 @@
     {{/if}}
 
     {{#if content.preFooter}}
-    <div style="margin: 20px 0; {{footerFontSizeCSS style.fontSize}};">
+    <div style="margin: 20px 0; font-size: {{style.footerFontSize}}px;">
       {{#each content.preFooter}}
       <p style="margin: 4px 0;">{{this}}</p>
       {{/each}}
@@ -56,7 +56,7 @@
 
     {{#if content.footer}}
       <div
-        style="border-top: 1px dashed #999; padding-top: 10px; margin-top: 15px; {{footerFontSizeCSS style.fontSize}};">
+        style="border-top: 1px dashed #999; padding-top: 10px; margin-top: 15px; font-size: {{style.footerFontSize}}px;">
         {{#each content.footer}}
           <p style="margin: 4px 0;">{{this}}</p>
         {{/each}}

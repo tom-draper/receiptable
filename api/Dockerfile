@@ -28,7 +28,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Cleanup in same layer to reduce image size
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean \
-    && rm -rf /tmp/*
+    && rm -rf /tmp/* \
+    && rm -rf /var/cache/apt/*
 
 # Create necessary directories and set permissions for Chrome
 RUN mkdir -p /home/deno/.local/share/applications \
@@ -44,12 +45,17 @@ USER deno
 # Set the working directory in the container
 WORKDIR /app
 
-RUN mkdir -p /app/data && chown -R deno:deno /app/data
-COPY --chown=deno:deno ../data ./data
+# Create data directory with proper permissions
+RUN mkdir -p /app/data
 
-# Copy deno.json and deno.lock first for better caching
+# Copy dependency files first for better caching
 COPY --chown=deno:deno deno.json deno.lock* ./
+
+# Cache dependencies
 RUN deno cache deno.json
+
+# Copy data directory (if it exists)
+COPY --chown=deno:deno data ./data/ 2>/dev/null || true
 
 # Copy the rest of the application files
 COPY --chown=deno:deno . .
@@ -61,10 +67,14 @@ ENV DENO_ENV=production \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     DISPLAY=:99 \
     # Additional Chrome flags for Docker environment
-    PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu --no-first-run --no-default-browser-check --disable-background-timer-throttling"
+    PUPPETEER_ARGS="--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu --no-first-run --no-default-browser-check --disable-background-timer-throttling --disable-extensions --disable-plugins --disable-images --disable-javascript --headless=new"
 
 # Expose the port your app runs on
 EXPOSE 8000
+
+# Health check (optional but recommended)
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
 
 # Start the app with optimized flags
 CMD ["deno", "task", "start"]

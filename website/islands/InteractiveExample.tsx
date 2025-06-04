@@ -190,7 +190,11 @@ class Program
         using var client = new HttpClient();
         client.DefaultRequestHeaders.Add("X-AUTH-TOKEN", "<API_KEY>");
 
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var content = new StringContent(
+            json, 
+            Encoding.UTF8, 
+            "application/json"
+        );
         var response = await client.PostAsync(
             "https://receiptable.dev/api/v1/receipt", 
             content

@@ -45,7 +45,7 @@ USER deno
 WORKDIR /app
 
 RUN mkdir -p /app/data && chown -R deno:deno /app/data
-COPY --chown=deno:deno data ./data
+COPY --chown=deno:deno ../data ./data
 
 # Copy deno.json and deno.lock first for better caching
 COPY --chown=deno:deno deno.json deno.lock* ./
@@ -67,4 +67,4 @@ ENV DENO_ENV=production \
 EXPOSE 8000
 
 # Start the app with optimized flags
-CMD ["deno", "run", "start"]
+CMD ["deno", "task", "start"]

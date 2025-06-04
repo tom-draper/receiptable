@@ -7,11 +7,8 @@ type ProcessedReceiptData = {
 }
 
 // Pre-process receipt data before passing to template
-export function prepareReceiptData(content: ReceiptContent, format: ReceiptStyle = {}) {
-    const receiptData: Partial<ProcessedReceiptData> & {
-        content: ReceiptContent;
-        format: ReceiptStyle;
-    } = { content, style: format };
+export function prepareReceiptData(content: ReceiptContent, style: ReceiptStyle = {}) {
+    const receiptData: ProcessedReceiptData = { content, style };
 
     const defaultFormat = getDefaultStyle();
 
@@ -33,17 +30,19 @@ export function prepareReceiptData(content: ReceiptContent, format: ReceiptStyle
 
     // Add formatting if not provided
     receiptData.style = {
-        borderRadius: format?.borderRadius || defaultFormat.borderRadius,
-        fontFamily: format?.fontFamily || defaultFormat.fontFamily,
-        fontSize: format?.fontSize || defaultFormat.fontSize,
-        lineSpacing: format?.lineSpacing || defaultFormat.lineSpacing,
-        backgroundColor: format?.backgroundColor || defaultFormat.backgroundColor,
-        color: format?.color || defaultFormat.color,
-        barcodeColor: format?.barcodeColor || defaultFormat.barcodeColor,
-        qrCodeColor: format?.qrCodeColor || defaultFormat.qrCodeColor,
-        borderColor: format?.borderColor || defaultFormat.borderColor,
-        width: format?.width || defaultFormat.width
+        borderRadius: style?.borderRadius || defaultFormat.borderRadius,
+        fontFamily: style?.fontFamily || defaultFormat.fontFamily,
+        fontSize: style?.fontSize || defaultFormat.fontSize,
+        footerFontSize: style?.footerFontSize || defaultFormat.footerFontSize,
+        barcodeFontSize: style?.footerFontSize || defaultFormat.barcodeFontSize,
+        lineSpacing: style?.lineSpacing || defaultFormat.lineSpacing,
+        backgroundColor: style?.backgroundColor || defaultFormat.backgroundColor,
+        color: style?.color || defaultFormat.color,
+        barcodeColor: style?.barcodeColor || defaultFormat.barcodeColor,
+        qrCodeColor: style?.qrCodeColor || defaultFormat.qrCodeColor,
+        borderColor: style?.borderColor || defaultFormat.borderColor,
+        width: style?.width || defaultFormat.width
     };
 
-    return receiptData;
+    return receiptData as ProcessedReceiptData;
 }

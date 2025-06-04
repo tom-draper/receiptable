@@ -76,6 +76,7 @@ export type ReceiptStyle = {
     fontFamily?: string;
     fontSize?: number;
     footerFontSize?: number;
+    barcodeFontSize?: number;
     lineSpacing?: number;
     backgroundColor?: string;
     color?: string;
@@ -91,7 +92,7 @@ let templates = await loadTemplates();
 registerHelpers();
 
 export async function htmlReceipt(content: ReceiptContent, format: ReceiptStyle = {}, template: string = 'default') {
-    if (Deno.env.get("ENV") === "development") {
+    if (Deno.env.get("DENO_ENV") === "development") {
         templates = await loadTemplates(); // Load templates fresh on each request in development
     }
     const processedData = prepareReceiptData(content, format);
@@ -105,6 +106,11 @@ export async function htmlReceipt(content: ReceiptContent, format: ReceiptStyle 
 }
 
 function findChromePath() {
+    const envChromePath = Deno.env.get('CHROME_PATH');
+    if (envChromePath && existsSync(envChromePath)) {
+        return envChromePath;
+    }
+
     const platform = Deno.build.os;
 
     const paths = {
@@ -117,10 +123,11 @@ function findChromePath() {
             '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary'
         ],
         linux: [
+            // Docker-friendly paths first
+            '/usr/bin/google-chrome-stable',
             '/usr/bin/google-chrome',
             '/usr/bin/chromium-browser',
-            '/usr/bin/chromium',
-            '/usr/bin/google-chrome-stable'
+            '/usr/bin/chromium'
         ]
     };
 
@@ -128,8 +135,14 @@ function findChromePath() {
         platform === 'darwin' ? paths.darwin : paths.linux;
 
     for (const path of platformPaths) {
-        if (existsSync(path)) {
-            return path;
+        try {
+            if (existsSync(path)) {
+                return path;
+            }
+        } catch (error) {
+            // Permission denied or other access issues - continue checking other paths
+            console.warn(`Cannot access ${path}: ${error}`);
+            continue;
         }
     }
 
@@ -140,9 +153,21 @@ function findChromePath() {
 export async function imageReceipt(content: ReceiptContent, format: ReceiptStyle = {}, template: string = 'default', imgFormat: string = 'png') {
     const html = await htmlReceipt(content, format, template);
 
+    const args = Deno.env.get("PUPPETEER_ARGS")?.split(" ") ?? [];
     const browser = await puppeteer.launch({
         defaultViewport: null, // Don't set a fixed viewport initially
         executablePath: findChromePath(),
+        args,
+        // args: [
+        //     "--no-sandbox",
+        //     "--disable-setuid-sandbox",
+        //     "--disable-dev-shm-usage",
+        //     "--disable-gpu",
+        //     "--no-first-run",
+        //     "--no-default-browser-check",
+        //     "--disable-background-timer-throttling",
+        // ],
+        headless: true
     });
 
     const page = await browser.newPage();
@@ -152,7 +177,7 @@ export async function imageReceipt(content: ReceiptContent, format: ReceiptStyle
     const dimensions = await page.evaluate(() => {
         // Get the first div which is our receipt container
         // @ts-ignore: document is not defined in Deno
-        const receiptElement = document.body.querySelector('div[style*="max-width"]');
+        const receiptElement = document.body.querySelector('div[style*="width"]');
         if (!receiptElement) return { width: 448, height: 600 }; // Default fallback
 
         const rect = receiptElement.getBoundingClientRect();
@@ -189,9 +214,21 @@ export async function imageReceipt(content: ReceiptContent, format: ReceiptStyle
 export async function pdfReceipt(content: ReceiptContent, format: ReceiptStyle = {}, template: string = 'default') {
     const html = await htmlReceipt(content, format, template);
 
+    const args = Deno.env.get("PUPPETEER_ARGS")?.split(" ") ?? [];
     const browser = await puppeteer.launch({
         defaultViewport: null,
         executablePath: findChromePath(),
+        args,
+        // args: [
+        //     "--no-sandbox",
+        //     "--disable-setuid-sandbox",
+        //     "--disable-dev-shm-usage",
+        //     "--disable-gpu",
+        //     "--no-first-run",
+        //     "--no-default-browser-check",
+        //     "--disable-background-timer-throttling",
+        // ],
+        headless: true
     });
 
     const page = await browser.newPage();

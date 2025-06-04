@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "ENV=development deno run --allow-net --allow-env --allow-sys --allow-write --allow-run --allow-read --watch -R main.ts",
+    "dev": "DENO_ENV=development deno run --allow-net --allow-env --allow-sys --allow-write --allow-run --allow-read --watch -R main.ts",
     "start": "deno run -A main.ts"
   },
   "imports": {
@@ -8,5 +8,6 @@
     "@std/http": "jsr:@std/http@1",
     "handlebars": "npm:handlebars@^4.7.8",
     "puppeteer-core": "npm:puppeteer-core@^24.7.1"
-  }
+  },
+  "nodeModulesDir": "auto"
 }

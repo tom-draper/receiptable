@@ -13,7 +13,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         storeAddress: "123 Main Street, Anytown, CA 94105",
         storePhone: "(555) 123-4567",
         storeWebsite: "www.coffeebakery.com",
-        storeImageUrl: "https://github.com/tom-draper/receiptable/blob/main/api/static/coffee.png",
+        storeImageUrl: "https://raw.githubusercontent.com/tom-draper/receiptable/refs/heads/main/api/static/coffee.png",
         storeImageWidth: 40,
         storeImageAlt: "Coffee & Bakery",
         storeImageGrayscale: true,
@@ -57,6 +57,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         fontFamily: "monospace",
         fontSize: 14,
         footerFontSize: 12,
+        barcodeFontSize: 11,
         lineSpacing: 1.4,
         backgroundColor: "#ffffff",
         color: "#484848",
@@ -211,6 +212,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                 fontFamily: formData.fontFamily,
                 fontSize: formData.fontSize,
                 footerFontSize: formData.footerFontSize,
+                barcodeFontSize: formData.barcodeFontSize,
                 lineSpacing: Number(formData.lineSpacing) || undefined,
                 backgroundColor: formData.backgroundColor,
                 color: formData.color,
@@ -384,6 +386,8 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
             borderRadius: 2,
             fontFamily: "monospace",
             fontSize: 14,
+            footerFontSize: 12,
+            barcodeFontSize: 11,
             lineSpacing: 1.4,
             backgroundColor: "#ffffff",
             color: "#484848",
@@ -1133,6 +1137,17 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                                     value={formData.footerFontSize}
                                     onChange={handleInputChange}
                                     placeholder="12"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Font Size</label>
+                                <input
+                                    type="number"
+                                    name="barcodeFontSize"
+                                    value={formData.barcodeFontSize}
+                                    onChange={handleInputChange}
+                                    placeholder="11"
                                     className="w-full p-2 border rounded-[1px] font-mono text-sm"
                                 />
                             </div>

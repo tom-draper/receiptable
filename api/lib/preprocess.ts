@@ -34,7 +34,7 @@ export function prepareReceiptData(content: ReceiptContent, style: ReceiptStyle 
         fontFamily: style?.fontFamily || defaultFormat.fontFamily,
         fontSize: style?.fontSize || defaultFormat.fontSize,
         footerFontSize: style?.footerFontSize || defaultFormat.footerFontSize,
-        barcodeFontSize: style?.footerFontSize || defaultFormat.barcodeFontSize,
+        barcodeFontSize: style?.barcodeFontSize || defaultFormat.barcodeFontSize,
         lineSpacing: style?.lineSpacing || defaultFormat.lineSpacing,
         backgroundColor: style?.backgroundColor || defaultFormat.backgroundColor,
         color: style?.color || defaultFormat.color,

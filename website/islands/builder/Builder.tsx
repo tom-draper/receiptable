@@ -33,9 +33,9 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         lastFour: "4321",
         thankYou: "Thank you for your purchase!",
         // New social media section
-        socialMediaFacebook: "coffeebakeryco",
-        socialMediaInstagram: "coffeebakeryco",
-        socialMediaTwitter: "coffeebakeryco",
+        socialMediaFacebook: "",
+        socialMediaInstagram: "",
+        socialMediaTwitter: "",
         // New pre-footer lines
         infoLine1: "Organic Coffee - Locally Sourced",
         infoLine2: "Open Mon-Fri: 7am-7pm, Sat-Sun: 8am-5pm",
@@ -210,9 +210,9 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
             style: {
                 borderRadius: formData.borderRadius,
                 fontFamily: formData.fontFamily,
-                fontSize: formData.fontSize,
-                footerFontSize: formData.footerFontSize,
-                barcodeFontSize: formData.barcodeFontSize,
+                fontSize: Number(formData.fontSize) || undefined,
+                footerFontSize: Number(formData.footerFontSize) || undefined,
+                barcodeFontSize: Number(formData.barcodeFontSize) || undefined,
                 lineSpacing: Number(formData.lineSpacing) || undefined,
                 backgroundColor: formData.backgroundColor,
                 color: formData.color,
@@ -478,7 +478,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                                 <input
                                     type="text"
                                     value={apiKey}
-                                    onChange={(e) => setApiKey(e.target.value)}
+                                    onInput={(e) => setApiKey(e.target.value)}
                                     placeholder="Enter your API key"
                                     className="w-full p-2 border rounded-[1px] font-mono text-sm"
                                 />

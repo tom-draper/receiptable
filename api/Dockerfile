@@ -72,7 +72,6 @@ ENV DENO_ENV=production \
 # Expose the port your app runs on
 EXPOSE 8000
 
-# Health check (optional but recommended)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 

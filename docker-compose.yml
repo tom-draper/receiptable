@@ -13,7 +13,7 @@ services:
     networks:
       - app_network
     volumes:
-      - ./data:/app/data
+      - ./api/data:/app/data
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s

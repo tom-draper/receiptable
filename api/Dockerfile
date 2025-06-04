@@ -55,7 +55,7 @@ COPY --chown=deno:deno deno.json deno.lock* ./
 RUN deno cache deno.json
 
 # Copy data directory (if it exists)
-COPY --chown=deno:deno data ./data/ 2>/dev/null || true
+# COPY --chown=deno:deno ./data ./data/
 
 # Copy the rest of the application files
 COPY --chown=deno:deno . .

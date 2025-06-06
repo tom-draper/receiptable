@@ -54,9 +54,6 @@ COPY deno.json deno.lock* ./
 # Cache dependencies
 RUN deno cache deno.json
 
-# Copy data directory (if it exists)
-# COPY --chown=deno:deno ./data ./data/
-
 # Copy the rest of the application files
 COPY . .
 

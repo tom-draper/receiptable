@@ -33,6 +33,7 @@ export type ReceiptContent = {
         instagram?: string;
         twitter?: string;
     };
+    surveyCode?: string;
     customer?: {
         name?: string;
         address?: string;
@@ -158,15 +159,6 @@ export async function imageReceipt(content: ReceiptContent, format: ReceiptStyle
         defaultViewport: null, // Don't set a fixed viewport initially
         executablePath: findChromePath(),
         args,
-        // args: [
-        //     "--no-sandbox",
-        //     "--disable-setuid-sandbox",
-        //     "--disable-dev-shm-usage",
-        //     "--disable-gpu",
-        //     "--no-first-run",
-        //     "--no-default-browser-check",
-        //     "--disable-background-timer-throttling",
-        // ],
         headless: true
     });
 
@@ -219,15 +211,6 @@ export async function pdfReceipt(content: ReceiptContent, format: ReceiptStyle =
         defaultViewport: null,
         executablePath: findChromePath(),
         args,
-        // args: [
-        //     "--no-sandbox",
-        //     "--disable-setuid-sandbox",
-        //     "--disable-dev-shm-usage",
-        //     "--disable-gpu",
-        //     "--no-first-run",
-        //     "--no-default-browser-check",
-        //     "--disable-background-timer-throttling",
-        // ],
         headless: true
     });
 

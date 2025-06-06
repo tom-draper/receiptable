@@ -1,4 +1,4 @@
-import { ReceiptContent, ReceiptData } from "./receipt.ts";
+import { ReceiptData } from "./receipt.ts";
 
 export const defaultReceiptContentExample: ReceiptData = {
     content: {

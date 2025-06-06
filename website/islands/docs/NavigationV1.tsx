@@ -120,9 +120,16 @@ export default function NavigationV1() {
                     </div>
 
                     <div style="display: flex; justify-content: space-between; margin: 4px 0;">
-                        <a style="display: flex; margin-left: 3ch; justify-content: space-between; cursor-pointer" class="relative group cursor-pointer" href="/docs/v1#barcodes">
+                        <a style="display: flex; margin-left: 3ch; justify-content: space-between; cursor-pointer" class="relative group cursor-pointer" href="/docs/v1#barcode">
                             <span class="invisible group-hover:visible absolute right-full">*</span>
                             <span class="ml-[1ch]">Barcodes</span>
+                        </a>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+                        <a style="display: flex; margin-left: 3ch; justify-content: space-between; cursor-pointer" class="relative group cursor-pointer" href="/docs/v1#social-media">
+                            <span class="invisible group-hover:visible absolute right-full">*</span>
+                            <span class="ml-[1ch]">Social Media</span>
                         </a>
                     </div>
 

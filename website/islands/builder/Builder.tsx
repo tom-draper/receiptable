@@ -36,6 +36,8 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         socialMediaFacebook: "",
         socialMediaInstagram: "",
         socialMediaTwitter: "",
+        // Surveys
+        surveyCode: "",
         // New pre-footer lines
         infoLine1: "Organic Coffee - Locally Sourced",
         infoLine2: "Open Mon-Fri: 7am-7pm, Sat-Sun: 8am-5pm",
@@ -191,6 +193,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                     instagram: formData.socialMediaInstagram,
                     twitter: formData.socialMediaTwitter
                 },
+                surveyCode: formData.surveyCode,
                 info: [
                     formData.infoLine1,
                     formData.infoLine2,
@@ -348,7 +351,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
             storePhone: "",
             storeWebsite: "",
             storeImageUrl: "",
-            storeImageWidth: "",
+            storeImageWidth: 40,
             storeImageAlt: "",
             storeImageGrayscale: true,
             orderNumber: "",
@@ -369,6 +372,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
             socialMediaFacebook: "",
             socialMediaInstagram: "",
             socialMediaTwitter: "",
+            surveyCode: "",
             infoLine1: "",
             infoLine2: "",
             infoLine3: "",
@@ -437,11 +441,135 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         { value: "jpy", label: "JPY (¥)" }
     ];
 
-    const templateOptions = [
-        { value: 'default', label: 'Default' },
-        { value: 'barcode', label: 'Barcode' },
-        { value: 'ticket', label: 'Ticket' },
+    const templateOptions: { value: template; label: string }[] = [
+        { value: 'default', label: 'default' },
+        { value: 'barcode', label: 'barcode' },
+        { value: 'ticket', label: 'ticket' },
     ]
+
+    type template = 'default' | 'barcode' | 'ticket';
+
+    const applyDefaultStyles = (template: template) => {
+        if (template in defaultStylesMap) {
+            console.log(template)
+            applyStyles(defaultStylesMap[template])
+        }
+
+        switch (template) {
+            case 'default':
+                setFormData((prev) => {
+                    prev.qrCodeData = "https://receiptable.dev/";
+                    prev.barcodeNumber = "";
+                    return prev;
+                })
+                break;
+            case 'barcode':
+                setFormData((prev) => {
+                    prev.qrCodeData = "https://receiptable.dev/"
+                    prev.barcodeNumber = "";
+                    return prev;
+                })
+                break;
+            case 'ticket':
+                setFormData((prev) => {
+                    const today = new Date();
+
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+                    const dd = String(today.getDate()).padStart(2, '0');
+
+                    prev.qrCodeData = ""
+                    prev.barcodeNumber = `${yyyy}${mm}${dd}`;
+                    return prev;
+                })
+                break;
+        }
+    }
+
+    type Styles = {
+        borderRadius: number;
+        fontFamily: string;
+        fontSize: number;
+        footerFontSize: number;
+        barcodeFontSize: number;
+        lineSpacing: number;
+        backgroundColor: string;
+        color: string;
+        barcodeColor: string;
+        qrCodeColor: string;
+        borderColor: string;
+        width: number;
+    }
+
+    const applyStyles = (styles: Styles) => {
+        setFormData((prev) => {
+            prev.borderRadius = styles.borderRadius
+            prev.fontFamily = styles.fontFamily
+            prev.fontSize = styles.fontSize;
+            prev.footerFontSize = styles.footerFontSize;
+            prev.barcodeFontSize = styles.barcodeFontSize;
+            prev.lineSpacing = styles.lineSpacing;
+            prev.backgroundColor = styles.backgroundColor;
+            prev.color = styles.color;
+            prev.barcodeColor = styles.barcodeColor;
+            prev.qrCodeColor = styles.qrCodeColor;
+            prev.borderColor = styles.borderColor;
+            prev.width = styles.width;
+
+            return prev;
+        });
+    }
+
+    const defaultStyles: Styles = {
+        borderRadius: 2,
+        fontFamily: "monospace",
+        fontSize: 14,
+        footerFontSize: 12,
+        barcodeFontSize: 11,
+        lineSpacing: 1.4,
+        backgroundColor: "#ffffff",
+        color: "#484848",
+        barcodeColor: "#484848",
+        qrCodeColor: "#484848",
+        borderColor: "#ffffff",
+        width: 43,
+    }
+
+    const barcodeStyles: Styles = {
+        borderRadius: 2,
+        fontFamily: "monospace",
+        fontSize: 14,
+        footerFontSize: 12,
+        barcodeFontSize: 11,
+        lineSpacing: 1.4,
+        backgroundColor: "#ffffff",
+        color: "#484848",
+        barcodeColor: "#484848",
+        qrCodeColor: "#484848",
+        borderColor: "#ffffff",
+        width: 43,
+    }
+
+    const ticketStyles: Styles = {
+        borderRadius: 2,
+        fontFamily: "monospace",
+        fontSize: 14,
+        footerFontSize: 12,
+        barcodeFontSize: 11,
+        lineSpacing: 1.4,
+        backgroundColor: "#ffffff",
+        color: "#484848",
+        barcodeColor: "#484848",
+        qrCodeColor: "#484848",
+        borderColor: "#ffffff",
+        width: 68,
+    }
+
+    const defaultStylesMap: Record<template, Styles> = {
+        'default': defaultStyles,
+        'barcode': barcodeStyles,
+        'ticket': ticketStyles,
+    }
 
     return (
         <div className="min-h-screen bg-[#f9f9f9]">
@@ -473,14 +601,14 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
 
                         <div className="flex-1 mb-6 p-4 bg-white rounded-[1px] receipt-section">
                             <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Authentication</h2>
-                            <div className="">
+                            <div>
                                 <label className="block text-sm mb-1 uppercase tracking-wide">API Key</label>
                                 <input
                                     type="text"
                                     value={apiKey}
                                     onInput={(e) => setApiKey(e.target.value)}
                                     placeholder="Enter your API key"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm placeholder-shown:bg-[yellow] bg-white transition-colors"
                                 />
                             </div>
                         </div>
@@ -492,21 +620,13 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                                 <select
                                     name="template"
                                     value={formData.template}
-                                    onChange={handleInputChange}
+                                    onChange={(e) => { handleInputChange(e); applyDefaultStyles(e.target.value) }}
                                     className="w-full p-2 border rounded-[1px] font-mono text-sm"
                                 >
                                     {templateOptions.map(option => (
                                         <option key={option.value} value={option.value}>{option.label}</option>
                                     ))}
                                 </select>
-                                {/* <label className="block text-sm mb-1 uppercase tracking-wide">Name</label>
-                                <input
-                                    type="text"
-                                    value={apiKey}
-                                    onChange={(e) => setApiKey(e.target.value)}
-                                    placeholder="Enter your API key"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                /> */}
                             </div>
                         </div>
                     </div>
@@ -680,7 +800,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                         <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Customer Information</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Customer Name</label>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Name</label>
                                 <input
                                     type="text"
                                     name="customerName"
@@ -690,7 +810,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Customer Email</label>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Email</label>
                                 <input
                                     type="email"
                                     name="customerEmail"
@@ -700,7 +820,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Customer Phone</label>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Phone</label>
                                 <input
                                     type="text"
                                     name="customerPhone"
@@ -710,7 +830,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Customer Address</label>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Address</label>
                                 <input
                                     type="email"
                                     name="customerAddress"
@@ -956,6 +1076,24 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                                     value={formData.socialMediaTwitter}
                                     onChange={handleInputChange}
                                     placeholder="username or URL"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Social Media Section */}
+                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
+                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Surveys</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Survey Code</label>
+                                <input
+                                    type="text"
+                                    name="surveyCode"
+                                    value={formData.surveyCode}
+                                    onChange={handleInputChange}
+                                    placeholder=""
                                     className="w-full p-2 border rounded-[1px] font-mono text-sm"
                                 />
                             </div>

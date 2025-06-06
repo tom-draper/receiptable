@@ -2,47 +2,66 @@ import { getDefaultStyle } from "./style.ts";
 import { ReceiptContent, ReceiptStyle } from "./receipt.ts";
 
 type ProcessedReceiptData = {
-    content: ReceiptContent;
-    style: ReceiptStyle;
+    content: Required<ReceiptContent>;
+    style: Required<ReceiptStyle>;
 }
 
-// Pre-process receipt data before passing to template
-export function prepareReceiptData(content: ReceiptContent, style: ReceiptStyle = {}) {
-    const receiptData: ProcessedReceiptData = { content, style };
+const DEFAULT_BARCODE_CONFIG = {
+    showBarcode: true,
+    barcodeHeight: 40,
+    qrCodeWidth: 40,
+} as const;
 
-    const defaultFormat = getDefaultStyle();
+function applyBarcodeDefaults(content: ReceiptContent): void {
+    if (!content.barcode) return;
 
-    if (content.barcode) {
-        if (content.barcode.barcode) {
-            if (content.barcode.showBarcode === undefined) {
-                content.barcode.showBarcode = true;
-            }
-            if (content.barcode.barcodeHeight === undefined) {
-                content.barcode.barcodeHeight = 40;
-            }
-        }
-        if (content.barcode.qrCode) {
-            if (content.barcode.qrCodeWidth === undefined) {
-                content.barcode.qrCodeWidth = 40;
-            }
-        }
+    const { barcode, qrCode } = content.barcode;
+
+    if (barcode && content.barcode.showBarcode === undefined) {
+        content.barcode.showBarcode = DEFAULT_BARCODE_CONFIG.showBarcode;
     }
+    
+    if (barcode && content.barcode.barcodeHeight === undefined) {
+        content.barcode.barcodeHeight = DEFAULT_BARCODE_CONFIG.barcodeHeight;
+    }
+    
+    if (qrCode && content.barcode.qrCodeWidth === undefined) {
+        content.barcode.qrCodeWidth = DEFAULT_BARCODE_CONFIG.qrCodeWidth;
+    }
+}
 
-    // Add formatting if not provided
-    receiptData.style = {
-        borderRadius: style?.borderRadius || defaultFormat.borderRadius,
-        fontFamily: style?.fontFamily || defaultFormat.fontFamily,
-        fontSize: style?.fontSize || defaultFormat.fontSize,
-        footerFontSize: style?.footerFontSize || defaultFormat.footerFontSize,
-        barcodeFontSize: style?.barcodeFontSize || defaultFormat.barcodeFontSize,
-        lineSpacing: style?.lineSpacing || defaultFormat.lineSpacing,
-        backgroundColor: style?.backgroundColor || defaultFormat.backgroundColor,
-        color: style?.color || defaultFormat.color,
-        barcodeColor: style?.barcodeColor || defaultFormat.barcodeColor,
-        qrCodeColor: style?.qrCodeColor || defaultFormat.qrCodeColor,
-        borderColor: style?.borderColor || defaultFormat.borderColor,
-        width: style?.width || defaultFormat.width
+function mergeStyles(userStyle: ReceiptStyle, defaultStyle: Required<ReceiptStyle>): Required<ReceiptStyle> {
+    return {
+        borderRadius: userStyle.borderRadius ?? defaultStyle.borderRadius,
+        fontFamily: userStyle.fontFamily ?? defaultStyle.fontFamily,
+        fontSize: userStyle.fontSize ?? defaultStyle.fontSize,
+        footerFontSize: userStyle.footerFontSize ?? defaultStyle.footerFontSize,
+        barcodeFontSize: userStyle.barcodeFontSize ?? defaultStyle.barcodeFontSize,
+        lineSpacing: userStyle.lineSpacing ?? defaultStyle.lineSpacing,
+        backgroundColor: userStyle.backgroundColor ?? defaultStyle.backgroundColor,
+        color: userStyle.color ?? defaultStyle.color,
+        barcodeColor: userStyle.barcodeColor ?? defaultStyle.barcodeColor,
+        qrCodeColor: userStyle.qrCodeColor ?? defaultStyle.qrCodeColor,
+        borderColor: userStyle.borderColor ?? defaultStyle.borderColor,
+        width: userStyle.width ?? defaultStyle.width,
     };
+}
 
-    return receiptData as ProcessedReceiptData;
+/**
+ * Pre-processes receipt data by applying default values for missing properties
+ */
+export function prepareReceiptData(
+    content: ReceiptContent, 
+    style: ReceiptStyle = {}
+): ProcessedReceiptData {
+    // Apply barcode defaults in-place
+    applyBarcodeDefaults(content);
+    
+    // Merge user style with defaults
+    const processedStyle = mergeStyles(style, getDefaultStyle());
+    
+    return {
+        content: content as Required<ReceiptContent>,
+        style: processedStyle,
+    };
 }

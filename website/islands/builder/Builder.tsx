@@ -445,9 +445,10 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         { value: 'default', label: 'default' },
         { value: 'barcode', label: 'barcode' },
         { value: 'ticket', label: 'ticket' },
+        { value: 'self-service', label: 'self-service' },
     ]
 
-    type template = 'default' | 'barcode' | 'ticket';
+    type template = 'default' | 'barcode' | 'ticket' | 'self-service';
 
     const applyDefaultStyles = (template: template) => {
         if (template in defaultStylesMap) {
@@ -457,15 +458,10 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
 
         switch (template) {
             case 'default':
+            case 'barcode':
+            case 'self-service':
                 setFormData((prev) => {
                     prev.qrCodeData = "https://receiptable.dev/";
-                    prev.barcodeNumber = "";
-                    return prev;
-                })
-                break;
-            case 'barcode':
-                setFormData((prev) => {
-                    prev.qrCodeData = "https://receiptable.dev/"
                     prev.barcodeNumber = "";
                     return prev;
                 })
@@ -569,6 +565,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         'default': defaultStyles,
         'barcode': barcodeStyles,
         'ticket': ticketStyles,
+        'self-service': defaultStyles,
     }
 
     return (

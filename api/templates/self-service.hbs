@@ -1,0 +1,148 @@
+<div id="receipt"
+  style="width: fit-content; padding: 1.5rem; font-family: {{style.fontFamily}}; background: {{style.backgroundColor}}; border-radius: {{style.borderRadius}}; color: {{style.color}}; font-size: {{style.fontSize}}px; line-height: {{style.lineSpacing}}; word-wrap: break-word; box-sizing: content-box; {{receiptBorderCSS style.borderColor}}">
+  <div id="receipt-content" style="width: {{style.width}}ch;">
+
+    <div style="text-align: center; margin-bottom: 20px;">
+      {{#if content.store.image}}
+      <img
+        style="width: {{content.store.image.width}}%; margin-top: 20px; margin-bottom: -20px; {{grayscaleFilterCSS content.store.image.grayscale}}"
+        src="{{content.store.image.url}}" alt="{{content.store.image.alt}}">
+      {{/if}}
+      <h1 style="margin: 40px auto 20px; font-size: 24px; color: {{style.backgroundColor}}; background: {{style.color}}; min-width: 50%; width: fit-content; padding: 0.4ch 2ch;">
+        {{#if content.orderNumber}}
+        {{content.orderNumber}}
+        {{else if content.store.name}}
+        {{content.store.name}}
+        {{else}}
+        ORDER
+        {{/if}}
+      </h1>
+      {{#if content.surveycode}}
+      Survey code: <br>{{content.surveycode}}
+      {{/if}}
+      {{#if content.store.name}}
+      Thank you for visiting <br>{{content.store.name}}
+      {{/if}}
+      {{#if content.store.address}}
+      <p style="margin: 4px 0;">{{content.store.address}}</p>
+      {{/if}}
+      {{#if content.store.phone}}
+      <p style="margin: 4px 0;">Phone: {{content.store.phone}}</p>
+      {{/if}}
+      {{#if content.store.email}}
+      <p style="margin: 4px 0;">E-mail: {{content.store.email}}</p>
+      {{/if}}
+      {{#if content.store.website}}
+      <p style="margin: 4px 0;">{{content.store.website}}</p>
+      {{/if}}
+    </div>
+
+    <div style="margin: 40px 0 0;">
+      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p> --}}
+      {{!-- <div style="display: flex; justify-content: space-between; font-weight: bold; margin: 8px 0;">
+        <div>Item</div>
+        <div>Price</div>
+      </div> --}}
+      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p> --}}
+
+      {{#if content.items}}
+      {{#each content.items}}
+      <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+        <div style="margin-left: 2ch;">{{this.quantity}} {{this.name}}</div>
+        <div>{{formatCurrency (totalPrice this) ../content.currency}}{{#if this.discount}} (-{{formatCurrency
+          this.discount ../content.currency false}}){{/if}}</div>
+      </div>
+      {{/each}}
+      {{!-- {{else}} --}}
+      {{!-- <p style="margin: 4px 0; text-align: center;">No items</p> --}}
+      {{/if}}
+
+      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p> --}}
+    </div>
+
+    <div style="margin: 0px 0;">
+      <div style="display: flex; justify-content: space-between; margin: 4px 0;">
+        <div>Total (incl. tax):</div>
+        <div>{{formatCurrency (total content.items content.tax content.tip) content.currency}}</div>
+      </div>
+
+
+
+      {{!-- <p style="margin: 8px 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{starLine style.width}}</p> --}}
+
+      {{!-- <div style="display: flex; justify-content: space-between; font-weight: bold; margin: 4px 0;">
+        <div>TOTAL:</div>
+        <div>{{formatCurrency (total content.items content.tax content.tip) content.currency}}</div>
+      </div> --}}
+    </div>
+
+    {{#if content.paymentMethod}}
+    <div style="margin: 15px 0;">
+      <p style="margin: 4px 0;">Payment Method: {{content.paymentMethod}}</p>
+      {{#if content.paymentDetails}}
+      {{#if content.paymentDetails.cardType}}
+      <p style="margin: 4px 0;">{{content.paymentDetails.cardType}} ****{{content.paymentDetails.lastFour}}</p>
+      {{/if}}
+      {{/if}}
+      <p style="margin: 4px 0;">Amount Paid: {{formatCurrency (total content.items content.tax content.tip)
+        content.currency}}</p>
+      <p style="margin: 4px 0;">Change Due: {{formatCurrency 0 content.currency}}</p>
+    </div>
+    {{/if}}
+
+    <div style="margin-top: 20px; text-align: center;">
+      {{!-- <p style="margin: 8px 0; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{starLine style.width}}</p> --}}
+      {{#if content.thankYou}}
+      <p style="margin: 8px 0;">{{content.thankYou}}</p>
+      {{/if}}
+
+      {{#if content.info}}
+      <div style="text-align: center; font-size: {{style.footerFontSize}}px;">
+        {{#each content.info}}
+        <p style="margin: 4px 0;">{{this}}</p>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if content.barcode}}
+      {{#if content.barcode.barcode}}
+      <div style="text-align: center; margin: 20px 0;">
+        <div>
+          {{{barcodeSvg content.barcode.barcode (fallback style.barcodeColor style.color)
+          content.barcode.barcodeHeight}}}
+        </div>
+        {{#if content.barcode.showBarcode}}
+        <div style="margin-top: 8px; font-size: {{style.barcodeFontSize}}px;">
+          <p style="margin: 4px 0;">{{content.barcode.barcode}}</p>
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+
+      {{#if content.barcode.qrCode}}
+      <div style="text-align: center; margin: 20px 0;">
+        {{{qrCodeSvg content.barcode.qrCode (fallback style.qrCodeColor style.color) content.barcode.qrCodeWidth}}}
+      </div>
+      {{/if}}
+      {{/if}}
+
+      {{#if content.preFooter}}
+      <div style="margin: 20px 0; text-align: center; font-size: {{style.footerFontSize}}px;">
+        {{#each content.preFooter}}
+        <p style="margin: 4px 0;">{{this}}</p>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if content.footer}}
+      <div
+        style="adding-top: 5px; margin-top: 15px; text-align: center; font-size: {{style.footerFontSize}}px;">
+        {{#each content.footer}}
+        <p style="margin: 4px 0;">{{this}}</p>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
+
+  </div>
+</div>

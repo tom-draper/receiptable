@@ -1,6 +1,716 @@
 
 import { useEffect, useRef, useState } from "preact/hooks";
 
+
+// Separate form sections into individual components
+const FormSection = ({ title, children, className = "" }) => (
+    <div className={`mb-6 p-4 bg-white rounded-[1px] receipt-section ${className}`}>
+        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">{title}</h2>
+        {children}
+    </div>
+);
+
+const FormField = ({
+    label,
+    type = "text",
+    name,
+    value,
+    onChange,
+    placeholder = "",
+    className = "",
+    ...props
+}) => (
+    <div className={className}>
+        <label className="block text-sm mb-1 uppercase tracking-wide">{label}</label>
+        <input
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="w-full p-2 border rounded-[1px] font-mono text-sm"
+            {...props}
+        />
+    </div>
+);
+
+const SelectField = ({ label, name, value, onChange, options, className = "" }) => (
+    <div className={className}>
+        <label className="block text-sm mb-1 uppercase tracking-wide">{label}</label>
+        <select
+            name={name}
+            value={value}
+            onChange={onChange}
+            className="w-full p-2 border rounded-[1px] font-mono text-sm"
+        >
+            {options.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+        </select>
+    </div>
+);
+
+const ColorField = ({ label, name, value, onChange, className = "" }) => (
+    <div className={className}>
+        <label className="block text-sm mb-1 uppercase tracking-wide">{label}</label>
+        <div className="flex">
+            <input
+                type="color"
+                name={name}
+                value={value}
+                onChange={onChange}
+                className="w-10 h-10 p-0 border rounded-[1px]"
+            />
+            <input
+                type="text"
+                name={name}
+                value={value}
+                onChange={onChange}
+                className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
+            />
+        </div>
+    </div>
+);
+
+const CheckboxField = ({ label, name, checked, onChange, className = "" }) => (
+    <div className={`grid place-items-end ${className}`}>
+        <label className="flex items-center text-sm uppercase tracking-wide mr-auto mb-2 ml-2">
+            <input
+                type="checkbox"
+                name={name}
+                checked={checked}
+                onChange={onChange}
+                className="mr-2"
+            />
+            {label}
+        </label>
+    </div>
+);
+
+// Authentication Section Component
+const AuthenticationSection = ({ apiKey, setApiKey }) => (
+    <FormSection title="Authentication">
+        <label className="block text-sm mb-1 uppercase tracking-wide">API Key</label>
+        <input
+            type="text"
+            value={apiKey}
+            onInput={(e) => setApiKey(e.target.value)}
+            placeholder="Enter your API key"
+            className="w-full p-2 border rounded-[1px] font-mono text-sm placeholder-shown:bg-[yellow] bg-white transition-colors"
+        />
+    </FormSection>
+);
+
+// Template Section Component
+const TemplateSection = ({ formData, handleInputChange, applyDefaultStyles, templateOptions }) => (
+    <FormSection title="Template">
+        <SelectField
+            label="Name"
+            name="template"
+            value={formData.template}
+            onChange={(e) => {
+                handleInputChange(e);
+                applyDefaultStyles(e.target.value);
+            }}
+            options={templateOptions}
+        />
+    </FormSection>
+);
+
+// Style Options Section Component
+const StyleOptionsSection = ({ formData, handleInputChange, fontOptions }) => (
+    <FormSection title="Style Options">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+                label="Border Radius"
+                type="number"
+                name="borderRadius"
+                value={formData.borderRadius}
+                onChange={handleInputChange}
+                placeholder="2"
+            />
+            <FormField
+                label="Width (characters)"
+                type="number"
+                name="width"
+                value={formData.width}
+                onChange={handleInputChange}
+                placeholder="43"
+            />
+            <SelectField
+                label="Font"
+                name="fontFamily"
+                value={formData.fontFamily}
+                onChange={handleInputChange}
+                options={fontOptions}
+            />
+            <FormField
+                label="Line Spacing"
+                type="number"
+                name="lineSpacing"
+                value={formData.lineSpacing}
+                onChange={handleInputChange}
+                placeholder="1.4"
+                step="0.1"
+            />
+            <FormField
+                label="Font Size"
+                type="number"
+                name="fontSize"
+                value={formData.fontSize}
+                onChange={handleInputChange}
+                placeholder="14"
+            />
+            <FormField
+                label="Footer Font Size"
+                type="number"
+                name="footerFontSize"
+                value={formData.footerFontSize}
+                onChange={handleInputChange}
+                placeholder="12"
+            />
+            <FormField
+                label="Barcode Font Size"
+                type="number"
+                name="barcodeFontSize"
+                value={formData.barcodeFontSize}
+                onChange={handleInputChange}
+                placeholder="11"
+            />
+            <ColorField
+                label="Background Color"
+                name="backgroundColor"
+                value={formData.backgroundColor}
+                onChange={handleInputChange}
+            />
+            <ColorField
+                label="Text Color"
+                name="color"
+                value={formData.color}
+                onChange={handleInputChange}
+            />
+            <ColorField
+                label="Barcode Color"
+                name="barcodeColor"
+                value={formData.barcodeColor}
+                onChange={handleInputChange}
+            />
+            <ColorField
+                label="QR Code Color"
+                name="qrCodeColor"
+                value={formData.qrCodeColor}
+                onChange={handleInputChange}
+            />
+            <ColorField
+                label="Border Color"
+                name="borderColor"
+                value={formData.borderColor}
+                onChange={handleInputChange}
+            />
+        </div>
+    </FormSection>
+);
+
+// Store Information Section Component
+const StoreInformationSection = ({ formData, handleInputChange, currencyOptions }) => (
+    <FormSection title="Store Information">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+                label="Store Name"
+                name="storeName"
+                value={formData.storeName}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Store Address"
+                name="storeAddress"
+                value={formData.storeAddress}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Store Phone"
+                name="storePhone"
+                value={formData.storePhone}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Store Website"
+                name="storeWebsite"
+                value={formData.storeWebsite}
+                onChange={handleInputChange}
+            />
+            <SelectField
+                label="Currency"
+                name="currency"
+                value={formData.currency}
+                onChange={handleInputChange}
+                options={currencyOptions}
+            />
+            <FormField
+                label="Store Image URL"
+                name="storeImageUrl"
+                value={formData.storeImageUrl}
+                onChange={handleInputChange}
+                placeholder="https://example.com/logo.png"
+                className="md:col-span-2"
+            />
+
+            {/* Store Image Settings */}
+            <div className="md:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <FormField
+                        label="Width (%)"
+                        type="number"
+                        name="storeImageWidth"
+                        value={formData.storeImageWidth || ""}
+                        onChange={handleInputChange}
+                    />
+                    <FormField
+                        label="Alt Text"
+                        name="storeImageAlt"
+                        value={formData.storeImageAlt || ""}
+                        onChange={handleInputChange}
+                        placeholder="Store logo description"
+                    />
+                    <CheckboxField
+                        label="Grayscale"
+                        name="storeImageGrayscale"
+                        checked={formData.storeImageGrayscale || false}
+                        onChange={(e) => handleInputChange({
+                            target: {
+                                name: e.target.name,
+                                value: e.target.checked
+                            }
+                        })}
+                    />
+                </div>
+            </div>
+        </div>
+    </FormSection>
+);
+
+// Order Information Section Component
+const OrderInformationSection = ({ formData, handleInputChange }) => (
+    <FormSection title="Order Information">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+                label="Order Number"
+                name="orderNumber"
+                value={formData.orderNumber}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Date"
+                name="date"
+                value={formData.date}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Time"
+                name="time"
+                value={formData.time}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Cashier"
+                name="cashier"
+                value={formData.cashier}
+                onChange={handleInputChange}
+            />
+        </div>
+    </FormSection>
+);
+
+// Customer Information Section Component
+const CustomerInformationSection = ({ formData, handleInputChange }) => (
+    <FormSection title="Customer Information">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+                label="Name"
+                name="customerName"
+                value={formData.customerName}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Email"
+                type="email"
+                name="customerEmail"
+                value={formData.customerEmail}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Phone"
+                name="customerPhone"
+                value={formData.customerPhone}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Address"
+                name="customerAddress"
+                value={formData.customerAddress}
+                onChange={handleInputChange}
+            />
+        </div>
+    </FormSection>
+);
+
+// Item Component
+const ItemComponent = ({ item, index, updateItem, removeItem }) => (
+    <div className="mb-4 p-3 border border-dashed border-gray-300 rounded-[1px] bg-gray-50">
+        <div className="flex justify-between mb-2">
+            <h3 className="font-mono uppercase">Item #{index + 1}</h3>
+            <button
+                onClick={() => removeItem(index)}
+                className="text-red-500 hover:text-red-700 font-mono"
+            >
+                Remove [X]
+            </button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+            <FormField
+                label="Item Name"
+                value={item.name}
+                onChange={(e) => updateItem(index, "name", e.target.value)}
+            />
+            <FormField
+                label="Quantity"
+                type="number"
+                min="1"
+                value={item.quantity}
+                onChange={(e) => updateItem(index, "quantity", e.target.value)}
+            />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+                label="Price"
+                type="number"
+                step="0.01"
+                min="0"
+                value={item.price}
+                onChange={(e) => updateItem(index, "price", e.target.value)}
+            />
+            <FormField
+                label="Discount"
+                type="number"
+                step="0.01"
+                min="0"
+                value={item.discount}
+                onChange={(e) => updateItem(index, "discount", e.target.value)}
+            />
+        </div>
+    </div>
+);
+
+// Items Section Component
+const ItemsSection = ({ items, updateItem, removeItem, addItem }) => (
+    <FormSection title="Items">
+        {items.map((item, index) => (
+            <ItemComponent
+                key={index}
+                item={item}
+                index={index}
+                updateItem={updateItem}
+                removeItem={removeItem}
+            />
+        ))}
+        <button
+            onClick={addItem}
+            className="w-full p-2 bg-gray-100 text-gray-700 rounded-[1px] hover:bg-gray-200 transition font-mono uppercase"
+        >
+            [+] Add Item
+        </button>
+    </FormSection>
+);
+
+// Payment Information Section Component
+const PaymentInformationSection = ({ formData, handleInputChange }) => (
+    <FormSection title="Payment Information">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+                label="Tax Rate (%)"
+                type="number"
+                step="0.01"
+                min="0"
+                name="taxRate"
+                value={formData.taxRate}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Tip"
+                type="number"
+                step="0.01"
+                min="0"
+                name="tip"
+                value={formData.tip}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Payment Method"
+                name="paymentMethod"
+                value={formData.paymentMethod}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Card Type"
+                name="cardType"
+                value={formData.cardType}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Last Four"
+                name="lastFour"
+                value={formData.lastFour}
+                onChange={handleInputChange}
+            />
+        </div>
+    </FormSection>
+);
+
+// Barcode Section Component
+const BarcodeSection = ({ formData, handleInputChange }) => (
+    <FormSection title="Barcode">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <FormField
+                    label="Barcode Number"
+                    name="barcodeNumber"
+                    value={formData.barcodeNumber}
+                    onChange={handleInputChange}
+                    placeholder="e.g. 1234567890128"
+                />
+                <p className="text-xs text-gray-500 mt-1">Enter a valid barcode number (EAN-13, UPC, etc.)</p>
+            </div>
+            <div>
+                <FormField
+                    label="QR Code Data"
+                    name="qrCodeData"
+                    value={formData.qrCodeData}
+                    onChange={handleInputChange}
+                    placeholder="e.g. https://example.com/order/123"
+                />
+                <p className="text-xs text-gray-500 mt-1">Enter URL or text for QR code</p>
+            </div>
+            {formData.barcodeNumber && (
+                <CheckboxField
+                    label="Show Barcode Number"
+                    name="showBarcode"
+                    checked={formData.showBarcode || false}
+                    onChange={(e) => handleInputChange({
+                        target: {
+                            name: e.target.name,
+                            value: e.target.checked
+                        }
+                    })}
+                    className="md:col-span-2"
+                />
+            )}
+            <FormField
+                label="Barcode Height (pixels)"
+                type="number"
+                name="barcodeHeight"
+                value={formData.barcodeHeight}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="QR Code Width (%)"
+                type="number"
+                name="qrCodeWidth"
+                value={formData.qrCodeWidth}
+                onChange={handleInputChange}
+            />
+        </div>
+    </FormSection>
+);
+
+// Social Media Section Component
+const SocialMediaSection = ({ formData, handleInputChange }) => (
+    <FormSection title="Social Media">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <FormField
+                label="Facebook"
+                name="socialMediaFacebook"
+                value={formData.socialMediaFacebook}
+                onChange={handleInputChange}
+                placeholder="username or URL"
+            />
+            <FormField
+                label="Instagram"
+                name="socialMediaInstagram"
+                value={formData.socialMediaInstagram}
+                onChange={handleInputChange}
+                placeholder="username or URL"
+            />
+            <FormField
+                label="Twitter"
+                name="socialMediaTwitter"
+                value={formData.socialMediaTwitter}
+                onChange={handleInputChange}
+                placeholder="username or URL"
+            />
+        </div>
+    </FormSection>
+);
+
+// Surveys Section Component
+const SurveysSection = ({ formData, handleInputChange }) => (
+    <FormSection title="Surveys">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+                label="Survey Code"
+                name="surveyCode"
+                value={formData.surveyCode}
+                onChange={handleInputChange}
+            />
+        </div>
+    </FormSection>
+);
+
+// Additional Information Section Component
+const AdditionalInformationSection = ({ formData, handleInputChange }) => (
+    <FormSection title="Additional Information">
+        <FormField
+            label="Thank You Message"
+            name="thankYou"
+            value={formData.thankYou}
+            onChange={handleInputChange}
+            className="mb-4"
+        />
+
+        {/* Info Lines */}
+        <div className="mb-4">
+            <FormField
+                label="Info Line 1"
+                name="infoLine1"
+                value={formData.infoLine1}
+                onChange={handleInputChange}
+                className="mb-2"
+            />
+            <FormField
+                label="Info Line 2"
+                name="infoLine2"
+                value={formData.infoLine2}
+                onChange={handleInputChange}
+                className="mb-2"
+            />
+            <FormField
+                label="Info Line 3"
+                name="infoLine3"
+                value={formData.infoLine3}
+                onChange={handleInputChange}
+            />
+        </div>
+
+        {/* Pre-Footer Lines */}
+        <div className="mb-4">
+            <FormField
+                label="Pre-Footer Line 1"
+                name="preFooterLine1"
+                value={formData.preFooterLine1}
+                onChange={handleInputChange}
+                className="mb-2"
+            />
+            <FormField
+                label="Pre-Footer Line 2"
+                name="preFooterLine2"
+                value={formData.preFooterLine2}
+                onChange={handleInputChange}
+                className="mb-2"
+            />
+            <FormField
+                label="Pre-Footer Line 3"
+                name="preFooterLine3"
+                value={formData.preFooterLine3}
+                onChange={handleInputChange}
+            />
+        </div>
+
+        {/* Footer Lines */}
+        <div>
+            <FormField
+                label="Footer Line 1"
+                name="footerLine1"
+                value={formData.footerLine1}
+                onChange={handleInputChange}
+                className="mb-2"
+            />
+            <FormField
+                label="Footer Line 2"
+                name="footerLine2"
+                value={formData.footerLine2}
+                onChange={handleInputChange}
+                className="mb-2"
+            />
+            <FormField
+                label="Footer Line 3"
+                name="footerLine3"
+                value={formData.footerLine3}
+                onChange={handleInputChange}
+            />
+        </div>
+    </FormSection>
+);
+
+// JSON View Section Component
+const JsonViewSection = ({ copyJsonToClipboard, jsonCopied, codeElementRef }) => (
+<div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
+    <div className="flex justify-between items-center mb-2">
+        <h2 className="text-[16px] uppercase font-semibold receipt-header">API Request JSON</h2>
+        <div>
+            <button
+                onClick={copyJsonToClipboard}
+                className="text-sm px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-[1px] font-mono uppercase"
+            >
+                {jsonCopied ? "✓ Copied!" : "Copy JSON"}
+            </button>
+        </div>
+    </div>
+
+    <div className="mt-2 relative !text-[12px]">
+        <pre className="language-json bg-gray-800 text-gray-100 p-4 rounded-[1px] overflow-x-auto text-xs font-mono">
+            <code ref={codeElementRef} className="language-json">
+            </code>
+        </pre>
+    </div>
+</div>
+
+const Header = ({ generateReceipt, isLoading, apiKey, resetForm }) => (
+    <div className="flex items-center justify-between mb-6 border-b border-dashed border-gray-400 pb-4">
+        <h1 className="text-xl receipt-header tracking-wider">Receipt Builder</h1>
+        <div className="flex gap-4">
+            <button
+                onClick={generateReceipt}
+                disabled={isLoading || !apiKey}
+                title={!apiKey ? 'Enter API key to generate receipt' : ''}
+                className={`px-4 py-2 w-40 rounded-[1px] receipt-btn ${!apiKey ? 'bg-gray-300' : 'bg-gray-700 hover:bg-gray-800 text-white'
+                    }`}
+            >
+                {isLoading ? '...' : 'Generate Receipt'}
+            </button>
+            <button
+                onClick={resetForm}
+                className="px-4 py-2 bg-gray-200 rounded-[1px] receipt-btn hover:bg-gray-300"
+            >
+                Reset Form
+            </button>
+        </div>
+    </div>
+);
+
+// Preview Component
+const PreviewSection = () => (
+    <div className="mr-8 mt-[46px]">
+        <div className="text-center text-[#484848] text-[13px]">
+            Receipt Preview<br />v
+        </div>
+        <iframe
+            id="receipt-preview"
+            className="min-w-[43ch] min-h-[732px] mb-32 mt-4 border-0 bg-white text-[16px] rounded-[1px] flex-grow"
+            scrolling="no"
+            title="Receipt Preview"
+        />
+    </div>
+);
+
 export default function Builder({ serverUrl }: { serverUrl: string }) {
     // State for viewing JSON
     const [jsonCopied, setJsonCopied] = useState(false);
@@ -618,855 +1328,90 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         <div className="min-h-screen bg-[#f9f9f9]">
             <div className="flex">
                 <div className="flex-grow p-6 overflow-y-auto text-[#484848]">
-                    {/* Header with Title and Action Buttons */}
-                    <div className="flex items-center justify-between mb-6 border-b border-dashed border-gray-400 pb-4">
-                        <h1 className="text-xl receipt-header tracking-wider">Receipt Builder</h1>
-                        <div className="flex gap-4">
-                            <button
-                                onClick={generateReceipt}
-                                disabled={isLoading || !apiKey}
-                                title={!apiKey ? 'Enter API key to generate receipt' : ''}
-                                className={`px-4 py-2 w-40 rounded-[1px] receipt-btn ${!apiKey ? 'bg-gray-300' : 'bg-gray-700 hover:bg-gray-800 text-white'}`}
-                            >
-                                {isLoading ? '...' : 'Generate Receipt'}
-                            </button>
-                            <button
-                                onClick={resetForm}
-                                className="px-4 py-2 bg-gray-200 rounded-[1px] receipt-btn hover:bg-gray-300"
-                            >
-                                Reset Form
-                            </button>
-                        </div>
-                    </div>
+                    <Header
+                        generateReceipt={generateReceipt}
+                        isLoading={isLoading}
+                        apiKey={apiKey}
+                        resetForm={resetForm}
+                    />
 
-                    {/* API Key input */}
+                    {/* API Key and Template in flex container */}
                     <div className="flex gap-6">
-
-                        <div className="flex-1 mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                            <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Authentication</h2>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">API Key</label>
-                                <input
-                                    type="text"
-                                    value={apiKey}
-                                    onInput={(e) => setApiKey(e.target.value)}
-                                    placeholder="Enter your API key"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm placeholder-shown:bg-[yellow] bg-white transition-colors"
-                                />
-                            </div>
+                        <div className="flex-1">
+                            <AuthenticationSection apiKey={apiKey} setApiKey={setApiKey} />
                         </div>
-
-                        <div className="flex-1 mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                            <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Template</h2>
-                            <div className="">
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Name</label>
-                                <select
-                                    name="template"
-                                    value={formData.template}
-                                    onChange={(e) => { handleInputChange(e); applyDefaultStyles(e.target.value) }}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                >
-                                    {templateOptions.map(option => (
-                                        <option key={option.value} value={option.value}>{option.label}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Style Options */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Style Options</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Border Radius</label>
-                                <input
-                                    type="number"
-                                    name="borderRadius"
-                                    value={formData.borderRadius}
-                                    onChange={handleInputChange}
-                                    placeholder="2"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Width (characters)</label>
-                                <input
-                                    type="number"
-                                    name="width"
-                                    value={formData.width}
-                                    placeholder="43"
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Font</label>
-                                <select
-                                    name="fontFamily"
-                                    value={formData.fontFamily}
-                                    onChange={handleInputChange}
-                                    placeholder="monospace"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                >
-                                    {fontOptions.map(option => (
-                                        <option key={option.value} value={option.value}>{option.label}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Line Spacing</label>
-                                <input
-                                    type="number"
-                                    name="lineSpacing"
-                                    value={formData.lineSpacing}
-                                    onChange={handleInputChange}
-                                    placeholder="1.4"
-                                    step="0.1"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Font Size</label>
-                                <input
-                                    type="number"
-                                    name="fontSize"
-                                    value={formData.fontSize}
-                                    onChange={handleInputChange}
-                                    placeholder="14"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Footer Font Size</label>
-                                <input
-                                    type="number"
-                                    name="footerFontSize"
-                                    value={formData.footerFontSize}
-                                    onChange={handleInputChange}
-                                    placeholder="12"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Font Size</label>
-                                <input
-                                    type="number"
-                                    name="barcodeFontSize"
-                                    value={formData.barcodeFontSize}
-                                    onChange={handleInputChange}
-                                    placeholder="11"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Background Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="backgroundColor"
-                                        value={formData.backgroundColor}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="backgroundColor"
-                                        value={formData.backgroundColor}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Text Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="color"
-                                        value={formData.color}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="color"
-                                        value={formData.color}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="barcodeColor"
-                                        value={formData.barcodeColor}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="barcodeColor"
-                                        value={formData.barcodeColor}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">QR Code Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="qrCodeColor"
-                                        value={formData.qrCodeColor}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="qrCodeColor"
-                                        value={formData.qrCodeColor}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Border Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="borderColor"
-                                        value={formData.borderColor}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="borderColor"
-                                        value={formData.borderColor}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    {/* Store Information */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Store Information</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Store Name</label>
-                                <input
-                                    type="text"
-                                    name="storeName"
-                                    value={formData.storeName}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Store Address</label>
-                                <input
-                                    type="text"
-                                    name="storeAddress"
-                                    value={formData.storeAddress}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Store Phone</label>
-                                <input
-                                    type="text"
-                                    name="storePhone"
-                                    value={formData.storePhone}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Store Website</label>
-                                <input
-                                    type="text"
-                                    name="storeWebsite"
-                                    value={formData.storeWebsite}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Currency</label>
-                                <select
-                                    name="currency"
-                                    value={formData.currency}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                >
-                                    {currencyOptions.map(option => (
-                                        <option key={option.value} value={option.value}>{option.label}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Store Image URL</label>
-                                <input
-                                    type="text"
-                                    name="storeImageUrl"
-                                    value={formData.storeImageUrl}
-                                    onChange={handleInputChange}
-                                    placeholder="https://example.com/logo.png"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-
-                            {/* Store Image Settings */}
-                            <div className="md:col-span-2">
-                                {/* <h3 className="text-sm uppercase font-semibold mb-2">Image Settings</h3> */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <label className="block text-sm mb-1 uppercase tracking-wide">Width (%)</label>
-                                        <input
-                                            type="number"
-                                            name="storeImageWidth"
-                                            value={formData.storeImageWidth || ""}
-                                            onChange={handleInputChange}
-                                            className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm mb-1 uppercase tracking-wide">Alt Text</label>
-                                        <input
-                                            type="text"
-                                            name="storeImageAlt"
-                                            value={formData.storeImageAlt || ""}
-                                            onChange={handleInputChange}
-                                            placeholder="Store logo description"
-                                            className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                        />
-                                    </div>
-                                    <div className="grid place-items-end">
-                                        <label className="flex items-center text-sm uppercase tracking-wide mr-auto mb-2 ml-2">
-                                            <input
-                                                type="checkbox"
-                                                name="storeImageGrayscale"
-                                                checked={formData.storeImageGrayscale || false}
-                                                onChange={(e) => handleInputChange({
-                                                    target: {
-                                                        name: e.target.name,
-                                                        value: e.target.checked
-                                                    }
-                                                })}
-                                                className="mr-2"
-                                            />
-                                            Grayscale
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    {/* Order Information */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Order Information</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Order Number</label>
-                                <input
-                                    type="text"
-                                    name="orderNumber"
-                                    value={formData.orderNumber}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Date</label>
-                                <input
-                                    type="text"
-                                    name="date"
-                                    value={formData.date}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Time</label>
-                                <input
-                                    type="text"
-                                    name="time"
-                                    value={formData.time}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Cashier</label>
-                                <input
-                                    type="text"
-                                    name="cashier"
-                                    value={formData.cashier}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Customer Information */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Customer Information</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Name</label>
-                                <input
-                                    type="text"
-                                    name="customerName"
-                                    value={formData.customerName}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Email</label>
-                                <input
-                                    type="email"
-                                    name="customerEmail"
-                                    value={formData.customerEmail}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Phone</label>
-                                <input
-                                    type="text"
-                                    name="customerPhone"
-                                    value={formData.customerPhone}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Address</label>
-                                <input
-                                    type="email"
-                                    name="customerAddress"
-                                    value={formData.customerAddress}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Items */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Items</h2>
-                        {items.map((item, index) => (
-                            <div key={index} className="mb-4 p-3 border border-dashed border-gray-300 rounded-[1px] bg-gray-50">
-                                <div className="flex justify-between mb-2">
-                                    <h3 className="font-mono uppercase">Item #{index + 1}</h3>
-                                    <button
-                                        onClick={() => removeItem(index)}
-                                        className="text-red-500 hover:text-red-700 font-mono"
-                                    >
-                                        Remove [X]
-                                    </button>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-                                    <div>
-                                        <label className="block text-sm mb-1 uppercase tracking-wide">Item Name</label>
-                                        <input
-                                            type="text"
-                                            value={item.name}
-                                            onChange={(e) => updateItem(index, "name", e.target.value)}
-                                            className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm mb-1 uppercase tracking-wide">Quantity</label>
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            value={item.quantity}
-                                            onChange={(e) => updateItem(index, "quantity", e.target.value)}
-                                            className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                        />
-                                    </div>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm mb-1 uppercase tracking-wide">Price</label>
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            value={item.price}
-                                            onChange={(e) => updateItem(index, "price", e.target.value)}
-                                            className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm mb-1 uppercase tracking-wide">Discount</label>
-                                        <input
-                                            type="number"
-                                            step="0.01"
-                                            min="0"
-                                            value={item.discount}
-                                            onChange={(e) => updateItem(index, "discount", e.target.value)}
-                                            className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                        <button
-                            onClick={addItem}
-                            className="w-full p-2 bg-gray-100 text-gray-700 rounded-[1px] hover:bg-gray-200 transition font-mono uppercase"
-                        >
-                            [+] Add Item
-                        </button>
-                    </div>
-
-                    {/* Payment Information */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Payment Information</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Tax Rate (%)</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    name="taxRate"
-                                    value={formData.taxRate}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Tip</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    min="0"
-                                    name="tip"
-                                    value={formData.tip}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Payment Method</label>
-                                <input
-                                    type="text"
-                                    name="paymentMethod"
-                                    value={formData.paymentMethod}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Card Type</label>
-                                <input
-                                    type="text"
-                                    name="cardType"
-                                    value={formData.cardType}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Last Four</label>
-                                <input
-                                    type="text"
-                                    name="lastFour"
-                                    value={formData.lastFour}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Barcode Section */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Barcode</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Number</label>
-                                <input
-                                    type="text"
-                                    name="barcodeNumber"
-                                    value={formData.barcodeNumber}
-                                    onChange={handleInputChange}
-                                    placeholder="e.g. 1234567890128"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                                <p className="text-xs text-gray-500 mt-1">Enter a valid barcode number (EAN-13, UPC, etc.)</p>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">QR Code Data</label>
-                                <input
-                                    type="text"
-                                    name="qrCodeData"
-                                    value={formData.qrCodeData}
-                                    onChange={handleInputChange}
-                                    placeholder="e.g. https://example.com/order/123"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                                <p className="text-xs text-gray-500 mt-1">Enter URL or text for QR code</p>
-                            </div>
-                            {formData.barcodeNumber && (
-                                <div className="md:col-span-2">
-                                    <label className="flex items-center text-sm uppercase tracking-wide mr-auto mb-2 ml-2">
-                                        <input
-                                            type="checkbox"
-                                            name="showBarcode"
-                                            checked={formData.showBarcode || false}
-                                            onChange={(e) => handleInputChange({
-                                                target: {
-                                                    name: e.target.name,
-                                                    value: e.target.checked
-                                                }
-                                            })}
-                                            className="mr-2"
-                                        />
-                                        Show Barcode Number
-                                    </label>
-                                </div>
-                            )}
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Height (pixels)</label>
-                                <input
-                                    type="number"
-                                    name="barcodeHeight"
-                                    value={formData.barcodeHeight}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">QR Code Width (%)</label>
-                                <input
-                                    type="number"
-                                    name="qrCodeWidth"
-                                    value={formData.qrCodeWidth}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Social Media Section */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Social Media</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Facebook</label>
-                                <input
-                                    type="text"
-                                    name="socialMediaFacebook"
-                                    value={formData.socialMediaFacebook}
-                                    onChange={handleInputChange}
-                                    placeholder="username or URL"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Instagram</label>
-                                <input
-                                    type="text"
-                                    name="socialMediaInstagram"
-                                    value={formData.socialMediaInstagram}
-                                    onChange={handleInputChange}
-                                    placeholder="username or URL"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Twitter</label>
-                                <input
-                                    type="text"
-                                    name="socialMediaTwitter"
-                                    value={formData.socialMediaTwitter}
-                                    onChange={handleInputChange}
-                                    placeholder="username or URL"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Social Media Section */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Surveys</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Survey Code</label>
-                                <input
-                                    type="text"
-                                    name="surveyCode"
-                                    value={formData.surveyCode}
-                                    onChange={handleInputChange}
-                                    placeholder=""
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Additional Information */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Additional Information</h2>
-                        <div className="mb-4">
-                            <label className="block text-sm mb-1 uppercase tracking-wide">Thank You Message</label>
-                            <input
-                                type="text"
-                                name="thankYou"
-                                value={formData.thankYou}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                            />
-                        </div>
-
-                        {/* Pre-Footer Section */}
-                        <div className="mb-4">
-                            <div className="mb-2">
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Info Line 1</label>
-                                <input
-                                    type="text"
-                                    name="infoLine1"
-                                    value={formData.infoLine1}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div className="mb-2">
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Info Line 2</label>
-                                <input
-                                    type="text"
-                                    name="infoLine2"
-                                    value={formData.infoLine2}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div className="mb-2">
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Info Line 3</label>
-                                <input
-                                    type="text"
-                                    name="infoLine3"
-                                    value={formData.infoLine3}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
-                        <div className="mb-4">
-                            <div className="mb-2">
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Pre-Footer Line 1</label>
-                                <input
-                                    type="text"
-                                    name="preFooterLine1"
-                                    value={formData.preFooterLine1}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div className="mb-2">
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Pre-Footer Line 2</label>
-                                <input
-                                    type="text"
-                                    name="preFooterLine2"
-                                    value={formData.preFooterLine2}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div className="mb-2">
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Pre-Footer Line 3</label>
-                                <input
-                                    type="text"
-                                    name="preFooterLine3"
-                                    value={formData.preFooterLine3}
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm mb-1 uppercase tracking-wide">Footer Line 1</label>
-                            <input
-                                type="text"
-                                name="footerLine1"
-                                value={formData.footerLine1}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded-[1px] font-mono text-sm mb-2"
-                            />
-                            <label className="block text-sm mb-1 uppercase tracking-wide">Footer Line 2</label>
-                            <input
-                                type="text"
-                                name="footerLine2"
-                                value={formData.footerLine2}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded-[1px] font-mono text-sm mb-2"
-                            />
-                            <label className="block text-sm mb-1 uppercase tracking-wide">Footer Line 3</label>
-                            <input
-                                type="text"
-                                name="footerLine3"
-                                value={formData.footerLine3}
-                                onChange={handleInputChange}
-                                className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                        <div className="flex-1">
+                            <TemplateSection
+                                formData={formData}
+                                handleInputChange={handleInputChange}
+                                applyDefaultStyles={applyDefaultStyles}
+                                templateOptions={templateOptions}
                             />
                         </div>
                     </div>
 
-                    {/* JSON View */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <div className="flex justify-between items-center mb-2">
-                            <h2 className="text-[16px] uppercase font-semibold receipt-header">API Request JSON</h2>
-                            <div>
-                                <button
-                                    onClick={copyJsonToClipboard}
-                                    className="text-sm px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-[1px] font-mono uppercase"
-                                >
-                                    {jsonCopied ? "✓ Copied!" : "Copy JSON"}
-                                </button>
-                            </div>
-                        </div>
+                    <StyleOptionsSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                        fontOptions={fontOptions}
+                    />
 
-                        <div className="mt-2 relative !text-[12px]">
-                            <pre className="language-json bg-gray-800 text-gray-100 p-4 rounded-[1px] overflow-x-auto text-xs font-mono">
-                                <code ref={codeElementRef} className="language-json">
-                                </code>
-                            </pre>
-                        </div>
-                    </div>
+                    <StoreInformationSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                        currencyOptions={currencyOptions}
+                    />
+
+                    <OrderInformationSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                    />
+
+                    <CustomerInformationSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                    />
+
+                    <ItemsSection
+                        items={items}
+                        updateItem={updateItem}
+                        removeItem={removeItem}
+                        addItem={addItem}
+                    />
+
+                    <PaymentInformationSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                    />
+
+                    <BarcodeSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                    />
+
+                    <SocialMediaSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                    />
+
+                    <SurveysSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                    />
+
+                    <AdditionalInformationSection
+                        formData={formData}
+                        handleInputChange={handleInputChange}
+                    />
+
+                    <JsonViewSection
+                        copyJsonToClipboard={copyJsonToClipboard}
+                        jsonCopied={jsonCopied}
+                        codeElementRef={codeElementRef}
+                    />
                 </div>
 
-                {/* Preview Section */}
-                <div class="mr-8 mt-[46px]">
-                    <div class="text-center text-[#484848] text-[13px]">Receipt Preview<br />v</div>
-                    <iframe
-                        id="receipt-preview"
-                        className="min-w-[43ch] min-h-[732px] mb-32 mt-4 border-0 bg-white text-[16px]  rounded-[1px] flex-grow"
-                        scrolling="no"
-                        title="Receipt Preview"
-                    ></iframe>
-                </div>
+                <PreviewSection />
             </div>
         </div>
     );

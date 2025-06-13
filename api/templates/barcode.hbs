@@ -1,7 +1,9 @@
 <div id="receipt"
-  style="width: fit-content; padding: 1.5rem; font-family: {{style.fontFamily}}; background: {{style.backgroundColor}}; border-radius: {{style.borderRadius}}; color: {{style.color}}; font-size: {{style.fontSize}}px; line-height: {{style.lineSpacing}}; word-wrap: break-word; box-sizing: content-box; text-align: center; {{receiptBorderCSS style.borderColor}}">
-  <div id="receipt-content" style="width: {{style.width}}ch;">
+  style="width: fit-content; padding: 1.5rem; font-family: {{font style.fontFamily}}; background: {{style.backgroundColor}}; border-radius: {{style.borderRadius}}; color: {{style.color}}; font-size: {{style.fontSize}}px; line-height: {{style.lineSpacing}}; word-wrap: break-word; box-sizing: content-box; text-align: center; {{receiptBorderCSS style.borderColor}}">
 
+  {{{fontTag style.fontFamily}}}
+
+  <div id="receipt-content" style="width: {{style.width}}ch;">
     <div style="margin-bottom: 10px;">
       {{#if content.store.image}}
       <img
@@ -55,12 +57,12 @@
     {{/if}}
 
     {{#if content.footer}}
-      <div
-        style="border-top: 1px dashed #999; padding-top: 10px; margin-top: 15px; font-size: {{style.footerFontSize}}px;">
-        {{#each content.footer}}
-          <p style="margin: 4px 0;">{{this}}</p>
-        {{/each}}
-      </div>
+    <div
+      style="border-top: 1px dashed #999; padding-top: 10px; margin-top: 15px; font-size: {{style.footerFontSize}}px;">
+      {{#each content.footer}}
+      <p style="margin: 4px 0;">{{this}}</p>
+      {{/each}}
+    </div>
     {{/if}}
   </div>
 </div>

@@ -1,6 +1,7 @@
 import handlebars from "npm:handlebars";
 import barcodeSvg from "./barcode.ts";
 import qrCodeSvg from "./qrcode.ts";
+import { fontTags } from "./fonts.ts";
 
 function getSubtotal(items: Array<{ price: number; quantity: number; discount?: number }>) {
 	if (!items || items.length === 0) {
@@ -93,6 +94,18 @@ export function registerHelpers() {
 
 	handlebars.registerHelper('hasPaymentDetails', function (paymentDetails) {
 		return paymentDetails && (paymentDetails.cardType && paymentDetails.lastFour);
+	});
+
+	handlebars.registerHelper('fontTag', function (font: string) {
+		return fontTags[font] ? fontTags[font] : '';
+	});
+
+	handlebars.registerHelper('font', function (font: string) {
+		if (font !== 'monospace' && font in fontTags) {
+			return `"${font}", monospace`
+		} else {
+			return font;
+		}
 	});
 
 	handlebars.registerHelper('barcodeSvg', function (barcode: string, color: string = '#000000', height: number = 70) {

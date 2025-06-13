@@ -448,6 +448,52 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         { value: 'self-service', label: 'self-service' },
     ]
 
+    const fontOptions: { value: string; label: string }[] = [
+        { value: 'monospace', label: 'monospace' },
+        { value: 'Anonymous Pro', label: 'Anonymous Pro' },
+        { value: 'Atkinson Hyperlegible Mono', label: 'Atkinson Hyperlegible Mono' },
+        { value: 'Azeret Mono', label: 'Azeret Mono' },
+        { value: 'B612 Mono', label: 'B612 Mono' },
+        { value: 'Chivo Mono', label: 'Chivo Mono' },
+        { value: 'Courier Prime', label: 'Courier Prime' },
+        { value: 'Cousine', label: 'Cousine' },
+        { value: 'Cutive Mono', label: 'Cutive Mono' },
+        { value: 'DM Mono', label: 'DM Mono' },
+        { value: 'Doto', label: 'Doto' },
+        { value: 'Fira Code', label: 'Fira Code' },
+        { value: 'Fira Mono', label: 'Fira Mono' },
+        { value: 'Fragment Mono', label: 'Fragment Mono' },
+        { value: 'Geist Mono', label: 'Geist Mono' },
+        { value: 'IBM Plex Mono', label: 'IBM Plex Mono' },
+        { value: 'Inconsolata', label: 'Inconsolata' },
+        { value: 'JetBrains Mono', label: 'JetBrains Mono' },
+        { value: 'Kode Mono', label: 'Kode Mono' },
+        { value: 'Lekton', label: 'Lekton' },
+        { value: 'Major Mono Display', label: 'Major Mono Display' },
+        { value: 'Martian Mono', label: 'Martian Mono' },
+        { value: 'Nova Mono', label: 'Nova Mono' },
+        { value: 'Overpass Mono', label: 'Overpass Mono' },
+        { value: 'Oxygen Mono', label: 'Oxygen Mono' },
+        { value: 'PT Mono', label: 'PT Mono' },
+        { value: 'Red Hat Mono', label: 'Red Hat Mono' },
+        { value: 'Reddit Mono', label: 'Reddit Mono' },
+        { value: 'Roboto Mono', label: 'Roboto Mono' },
+        { value: 'Share Tech Mono', label: 'Share Tech Mono' },
+        { value: 'Sixtyfour', label: 'Sixtyfour' },
+        { value: 'Sometype Mono', label: 'Sometype Mono' },
+        { value: 'Sono', label: 'Sono' },
+        { value: 'Source Code Pro', label: 'Source Code Pro' },
+        { value: 'Space Mono', label: 'Space Mono' },
+        { value: 'Spline Sans Mono', label: 'Spline Sans Mono' },
+        { value: 'Syne Mono', label: 'Syne Mono' },
+        { value: 'Ubuntu Mono', label: 'Ubuntu Mono' },
+        { value: 'Ubuntu Sans Mono', label: 'Ubuntu Sans Mono' },
+        { value: 'Victor Mono', label: 'Victor Mono' },
+        { value: 'VT323', label: 'VT323' },
+        { value: 'Workbench', label: 'Workbench' },
+        { value: 'Xanh Mono', label: 'Xanh Mono' },
+    ]
+
     type template = 'default' | 'barcode' | 'ticket' | 'self-service';
 
     const applyDefaultStyles = (template: template) => {
@@ -574,7 +620,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                 <div className="flex-grow p-6 overflow-y-auto text-[#484848]">
                     {/* Header with Title and Action Buttons */}
                     <div className="flex items-center justify-between mb-6 border-b border-dashed border-gray-400 pb-4">
-                        <h1 className="text-xl ml-3 receipt-header tracking-wider">Receipt Builder</h1>
+                        <h1 className="text-xl receipt-header tracking-wider">Receipt Builder</h1>
                         <div className="flex gap-4">
                             <button
                                 onClick={generateReceipt}
@@ -627,6 +673,190 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                             </div>
                         </div>
                     </div>
+
+                    {/* Style Options */}
+                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
+                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Style Options</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Border Radius</label>
+                                <input
+                                    type="number"
+                                    name="borderRadius"
+                                    value={formData.borderRadius}
+                                    onChange={handleInputChange}
+                                    placeholder="2"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Width (characters)</label>
+                                <input
+                                    type="number"
+                                    name="width"
+                                    value={formData.width}
+                                    placeholder="43"
+                                    onChange={handleInputChange}
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Font</label>
+                                <select
+                                    name="fontFamily"
+                                    value={formData.fontFamily}
+                                    onChange={handleInputChange}
+                                    placeholder="monospace"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                >
+                                    {fontOptions.map(option => (
+                                        <option key={option.value} value={option.value}>{option.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Line Spacing</label>
+                                <input
+                                    type="number"
+                                    name="lineSpacing"
+                                    value={formData.lineSpacing}
+                                    onChange={handleInputChange}
+                                    placeholder="1.4"
+                                    step="0.1"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Font Size</label>
+                                <input
+                                    type="number"
+                                    name="fontSize"
+                                    value={formData.fontSize}
+                                    onChange={handleInputChange}
+                                    placeholder="14"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Footer Font Size</label>
+                                <input
+                                    type="number"
+                                    name="footerFontSize"
+                                    value={formData.footerFontSize}
+                                    onChange={handleInputChange}
+                                    placeholder="12"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Font Size</label>
+                                <input
+                                    type="number"
+                                    name="barcodeFontSize"
+                                    value={formData.barcodeFontSize}
+                                    onChange={handleInputChange}
+                                    placeholder="11"
+                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Background Color</label>
+                                <div className="flex">
+                                    <input
+                                        type="color"
+                                        name="backgroundColor"
+                                        value={formData.backgroundColor}
+                                        onChange={handleInputChange}
+                                        className="w-10 h-10 p-0 border rounded-[1px]"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="backgroundColor"
+                                        value={formData.backgroundColor}
+                                        onChange={handleInputChange}
+                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Text Color</label>
+                                <div className="flex">
+                                    <input
+                                        type="color"
+                                        name="color"
+                                        value={formData.color}
+                                        onChange={handleInputChange}
+                                        className="w-10 h-10 p-0 border rounded-[1px]"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="color"
+                                        value={formData.color}
+                                        onChange={handleInputChange}
+                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Color</label>
+                                <div className="flex">
+                                    <input
+                                        type="color"
+                                        name="barcodeColor"
+                                        value={formData.barcodeColor}
+                                        onChange={handleInputChange}
+                                        className="w-10 h-10 p-0 border rounded-[1px]"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="barcodeColor"
+                                        value={formData.barcodeColor}
+                                        onChange={handleInputChange}
+                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">QR Code Color</label>
+                                <div className="flex">
+                                    <input
+                                        type="color"
+                                        name="qrCodeColor"
+                                        value={formData.qrCodeColor}
+                                        onChange={handleInputChange}
+                                        className="w-10 h-10 p-0 border rounded-[1px]"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="qrCodeColor"
+                                        value={formData.qrCodeColor}
+                                        onChange={handleInputChange}
+                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 uppercase tracking-wide">Border Color</label>
+                                <div className="flex">
+                                    <input
+                                        type="color"
+                                        name="borderColor"
+                                        value={formData.borderColor}
+                                        onChange={handleInputChange}
+                                        className="w-10 h-10 p-0 border rounded-[1px]"
+                                    />
+                                    <input
+                                        type="text"
+                                        name="borderColor"
+                                        value={formData.borderColor}
+                                        onChange={handleInputChange}
+                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     {/* Store Information */}
                     <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
@@ -1201,186 +1431,6 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                                 onChange={handleInputChange}
                                 className="w-full p-2 border rounded-[1px] font-mono text-sm"
                             />
-                        </div>
-                    </div>
-
-                    {/* Format Options */}
-                    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-                        <h2 className="text-[16px] uppercase font-semibold mb-2 receipt-header">Format Options</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Border Radius</label>
-                                <input
-                                    type="number"
-                                    name="borderRadius"
-                                    value={formData.borderRadius}
-                                    onChange={handleInputChange}
-                                    placeholder="2"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Width (characters)</label>
-                                <input
-                                    type="number"
-                                    name="width"
-                                    value={formData.width}
-                                    placeholder="43"
-                                    onChange={handleInputChange}
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Font Family</label>
-                                <input
-                                    type="text"
-                                    name="fontFamily"
-                                    value={formData.fontFamily}
-                                    onChange={handleInputChange}
-                                    placeholder="monospace"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Line Spacing</label>
-                                <input
-                                    type="number"
-                                    name="lineSpacing"
-                                    value={formData.lineSpacing}
-                                    onChange={handleInputChange}
-                                    placeholder="1.4"
-                                    step="0.1"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Font Size</label>
-                                <input
-                                    type="number"
-                                    name="fontSize"
-                                    value={formData.fontSize}
-                                    onChange={handleInputChange}
-                                    placeholder="14"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Footer Font Size</label>
-                                <input
-                                    type="number"
-                                    name="footerFontSize"
-                                    value={formData.footerFontSize}
-                                    onChange={handleInputChange}
-                                    placeholder="12"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Font Size</label>
-                                <input
-                                    type="number"
-                                    name="barcodeFontSize"
-                                    value={formData.barcodeFontSize}
-                                    onChange={handleInputChange}
-                                    placeholder="11"
-                                    className="w-full p-2 border rounded-[1px] font-mono text-sm"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Background Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="backgroundColor"
-                                        value={formData.backgroundColor}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="backgroundColor"
-                                        value={formData.backgroundColor}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Text Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="color"
-                                        value={formData.color}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="color"
-                                        value={formData.color}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Barcode Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="barcodeColor"
-                                        value={formData.barcodeColor}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="barcodeColor"
-                                        value={formData.barcodeColor}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">QR Code Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="qrCodeColor"
-                                        value={formData.qrCodeColor}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="qrCodeColor"
-                                        value={formData.qrCodeColor}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
-                            <div>
-                                <label className="block text-sm mb-1 uppercase tracking-wide">Border Color</label>
-                                <div className="flex">
-                                    <input
-                                        type="color"
-                                        name="borderColor"
-                                        value={formData.borderColor}
-                                        onChange={handleInputChange}
-                                        className="w-10 h-10 p-0 border rounded-[1px]"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="borderColor"
-                                        value={formData.borderColor}
-                                        onChange={handleInputChange}
-                                        className="flex-1 p-2 border rounded-[1px] ml-2 font-mono text-sm"
-                                    />
-                                </div>
-                            </div>
                         </div>
                     </div>
 

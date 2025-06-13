@@ -1,14 +1,17 @@
 <div id="receipt"
-  style="width: fit-content; padding: 1.5rem; font-family: {{style.fontFamily}}; background: {{style.backgroundColor}}; border-radius: {{style.borderRadius}}; color: {{style.color}}; font-size: {{style.fontSize}}px; line-height: {{style.lineSpacing}}; word-wrap: break-word; box-sizing: content-box; {{receiptBorderCSS style.borderColor}}">
-  <div id="receipt-content" style="width: {{style.width}}ch;">
+  style="width: fit-content; padding: 1.5rem; font-family: {{font style.fontFamily}}; background: {{style.backgroundColor}}; border-radius: {{style.borderRadius}}; color: {{style.color}}; font-size: {{style.fontSize}}px; line-height: {{style.lineSpacing}}; word-wrap: break-word; box-sizing: content-box; {{receiptBorderCSS style.borderColor}}">
 
+  {{{fontTag style.fontFamily}}}
+
+  <div id="receipt-content" style="width: {{style.width}}ch;">
     <div style="text-align: center; margin-bottom: 20px;">
       {{#if content.store.image}}
       <img
         style="width: {{content.store.image.width}}%; margin-top: 20px; margin-bottom: -20px; {{grayscaleFilterCSS content.store.image.grayscale}}"
         src="{{content.store.image.url}}" alt="{{content.store.image.alt}}">
       {{/if}}
-      <h1 style="margin: 40px auto 20px; font-size: 24px; color: {{style.backgroundColor}}; background: {{style.color}}; min-width: 50%; width: fit-content; padding: 0.4ch 2ch;">
+      <h1
+        style="margin: 40px auto 20px; font-size: 24px; color: {{style.backgroundColor}}; background: {{style.color}}; min-width: 50%; width: fit-content; padding: 0.4ch 2ch;">
         {{#if content.orderNumber}}
         {{content.orderNumber}}
         {{else if content.store.name}}
@@ -38,12 +41,14 @@
     </div>
 
     <div style="margin: 40px 0 0;">
-      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p> --}}
+      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">
+        {{dashLine style.width}}</p> --}}
       {{!-- <div style="display: flex; justify-content: space-between; font-weight: bold; margin: 8px 0;">
         <div>Item</div>
         <div>Price</div>
       </div> --}}
-      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p> --}}
+      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">
+        {{dashLine style.width}}</p> --}}
 
       {{#if content.items}}
       {{#each content.items}}
@@ -57,7 +62,8 @@
       {{!-- <p style="margin: 4px 0; text-align: center;">No items</p> --}}
       {{/if}}
 
-      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{dashLine style.width}}</p> --}}
+      {{!-- <p style="margin: 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">
+        {{dashLine style.width}}</p> --}}
     </div>
 
     <div style="margin: 0px 0;">
@@ -68,7 +74,8 @@
 
 
 
-      {{!-- <p style="margin: 8px 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{starLine style.width}}</p> --}}
+      {{!-- <p style="margin: 8px 0; text-align: center; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">
+        {{starLine style.width}}</p> --}}
 
       {{!-- <div style="display: flex; justify-content: space-between; font-weight: bold; margin: 4px 0;">
         <div>TOTAL:</div>
@@ -91,7 +98,8 @@
     {{/if}}
 
     <div style="margin-top: 20px; text-align: center;">
-      {{!-- <p style="margin: 8px 0; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{starLine style.width}}</p> --}}
+      {{!-- <p style="margin: 8px 0; overflow-wrap: normal; overflow: hidden; white-space: nowrap;">{{starLine
+        style.width}}</p> --}}
       {{#if content.thankYou}}
       <p style="margin: 8px 0;">{{content.thankYou}}</p>
       {{/if}}
@@ -135,8 +143,7 @@
       {{/if}}
 
       {{#if content.footer}}
-      <div
-        style="adding-top: 5px; margin-top: 15px; text-align: center; font-size: {{style.footerFontSize}}px;">
+      <div style="adding-top: 5px; margin-top: 15px; text-align: center; font-size: {{style.footerFontSize}}px;">
         {{#each content.footer}}
         <p style="margin: 4px 0;">{{this}}</p>
         {{/each}}

@@ -239,6 +239,18 @@ const StoreInformationSection = ({ formData, handleInputChange, currencyOptions 
                 value={formData.storeWebsite}
                 onChange={handleInputChange}
             />
+            <FormField
+                label="Store Number"
+                name="storeNumber"
+                value={formData.storeNumber}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="VAT Number"
+                name="vatNumber"
+                value={formData.vatNumber}
+                onChange={handleInputChange}
+            />
             <SelectField
                 label="Currency"
                 name="currency"
@@ -312,11 +324,29 @@ const OrderInformationSection = ({ formData, handleInputChange }) => (
                 onChange={handleInputChange}
             />
             <FormField
+                label="Transaction ID"
+                name="transactionID"
+                value={formData.transactionID}
+                onChange={handleInputChange}
+            />
+            <FormField
                 label="Cashier"
                 name="cashier"
                 value={formData.cashier}
                 onChange={handleInputChange}
             />
+            <CheckboxField
+                label="Paid"
+                name="paid"
+                checked={formData.paid || false}
+                onChange={(e) => handleInputChange({
+                    target: {
+                        name: e.target.name,
+                        value: e.target.checked
+                    }
+                })}
+            />
+
         </div>
     </FormSection>
 );
@@ -380,7 +410,7 @@ const ItemComponent = ({ item, index, updateItem, removeItem }) => (
                 onChange={(e) => updateItem(index, "quantity", e.target.value)}
             />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
             <FormField
                 label="Price"
                 type="number"
@@ -396,6 +426,25 @@ const ItemComponent = ({ item, index, updateItem, removeItem }) => (
                 min="0"
                 value={item.discount}
                 onChange={(e) => updateItem(index, "discount", e.target.value)}
+            />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+            <FormField
+                label="Item ID"
+                value={item.itemId}
+                onChange={(e) => updateItem(index, "itemId", e.target.value)}
+            />
+            <FormField
+                label="Item Group"
+                value={item.itemGroup}
+                onChange={(e) => updateItem(index, "itemGroup", e.target.value)}
+            />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-2">
+            <FormField
+                label="Item Notes"
+                value={item.itemNotes}
+                onChange={(e) => updateItem(index, "itemNotes", e.target.value)}
             />
         </div>
     </div>
@@ -561,6 +610,18 @@ const SurveysSection = ({ formData, handleInputChange }) => (
                 value={formData.surveyCode}
                 onChange={handleInputChange}
             />
+            <FormField
+                label="Survey URL"
+                name="surveyUrl"
+                value={formData.surveyUrl}
+                onChange={handleInputChange}
+            />
+            <FormField
+                label="Survey Info"
+                name="surveyInfo"
+                value={formData.surveyInfo}
+                onChange={handleInputChange}
+            />
         </div>
     </FormSection>
 );
@@ -652,27 +713,30 @@ const AdditionalInformationSection = ({ formData, handleInputChange }) => (
 
 // JSON View Section Component
 const JsonViewSection = ({ copyJsonToClipboard, jsonCopied, codeElementRef }) => (
-<div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
-    <div className="flex justify-between items-center mb-2">
-        <h2 className="text-[16px] uppercase font-semibold receipt-header">API Request JSON</h2>
-        <div>
-            <button
-                onClick={copyJsonToClipboard}
-                className="text-sm px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-[1px] font-mono uppercase"
-            >
-                {jsonCopied ? "✓ Copied!" : "Copy JSON"}
-            </button>
+    <div className="mb-6 p-4 bg-white rounded-[1px] receipt-section">
+        <div className="flex justify-between items-center mb-2">
+            <h2 className="text-[16px] uppercase font-semibold receipt-header">API Request JSON</h2>
+            <div>
+                <button
+                    onClick={copyJsonToClipboard}
+                    className="text-sm px-3 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-[1px] font-mono uppercase"
+                >
+                    {jsonCopied ? "✓ Copied!" : "Copy JSON"}
+                </button>
+            </div>
+        </div>
+
+        <div className="mt-2 relative !text-[12px]">
+            <pre className="language-json bg-gray-800 text-gray-100 p-4 rounded-[1px] overflow-x-auto text-xs font-mono">
+                <code ref={codeElementRef} className="language-json">
+                </code>
+            </pre>
         </div>
     </div>
+);
 
-    <div className="mt-2 relative !text-[12px]">
-        <pre className="language-json bg-gray-800 text-gray-100 p-4 rounded-[1px] overflow-x-auto text-xs font-mono">
-            <code ref={codeElementRef} className="language-json">
-            </code>
-        </pre>
-    </div>
-</div>
 
+// Header Component
 const Header = ({ generateReceipt, isLoading, apiKey, resetForm }) => (
     <div className="flex items-center justify-between mb-6 border-b border-dashed border-gray-400 pb-4">
         <h1 className="text-xl receipt-header tracking-wider">Receipt Builder</h1>
@@ -1060,11 +1124,13 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
             storeAddress: "",
             storePhone: "",
             storeWebsite: "",
+            storeNumber: "",
             storeImageUrl: "",
             storeImageWidth: 40,
             storeImageAlt: "",
             storeImageGrayscale: true,
             orderNumber: "",
+            transactionID: "",
             date: "",
             time: "",
             cashier: "",
@@ -1083,6 +1149,8 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
             socialMediaInstagram: "",
             socialMediaTwitter: "",
             surveyCode: "",
+            surveyUrl: "",
+            surveyInfo: "",
             infoLine1: "",
             infoLine2: "",
             infoLine3: "",

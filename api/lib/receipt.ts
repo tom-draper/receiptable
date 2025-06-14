@@ -23,17 +23,24 @@ export type ReceiptContent = {
         address?: string;
         phone?: string;
         website?: string;
+        number?: string;
+        vatNumber?: string;
     },
     orderNumber?: string;
     date?: string;
     time?: string;
     cashier?: string;
+    paid?: boolean;
     socialMedia?: {
         facebook?: string;
         instagram?: string;
         twitter?: string;
     };
-    surveyCode?: string;
+    survey?: {
+        code?: string;
+        url?: string;
+        info?: string;
+    };
     customer?: {
         name?: string;
         address?: string;
@@ -43,9 +50,12 @@ export type ReceiptContent = {
     currency?: string;
     items?: Array<{
         name: string;
-        quantity: number;
+        quantity?: number;
         price: number;
         discount?: number;
+        id?: string;
+        group?: string;
+        notes?: string;
     }>;
     subtotal?: number;
     tax?: {

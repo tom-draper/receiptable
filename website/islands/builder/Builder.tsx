@@ -603,7 +603,7 @@ const SocialMediaSection = ({ formData, handleInputChange }) => (
 // Surveys Section Component
 const SurveysSection = ({ formData, handleInputChange }) => (
     <FormSection title="Surveys">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <FormField
                 label="Survey Code"
                 name="surveyCode"
@@ -616,6 +616,8 @@ const SurveysSection = ({ formData, handleInputChange }) => (
                 value={formData.surveyUrl}
                 onChange={handleInputChange}
             />
+        </div>
+       <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <FormField
                 label="Survey Info"
                 name="surveyInfo"
@@ -792,6 +794,8 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         storeImageAlt: "Coffee & Bakery",
         storeImageGrayscale: true,
         orderNumber: "ORD-2025-04567",
+        transactionId: "",
+        paid: false,
         date: "April 24, 2025",
         time: "10:35 AM",
         cashier: "Emma S.",
@@ -812,6 +816,8 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
         socialMediaTwitter: "",
         // Surveys
         surveyCode: "",
+        surveyUrl: "",
+        surveyInfo: "",
         // New pre-footer lines
         infoLine1: "Organic Coffee - Locally Sourced",
         infoLine2: "Open Mon-Fri: 7am-7pm, Sat-Sun: 8am-5pm",
@@ -939,8 +945,12 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                     address: formData.storeAddress,
                     phone: formData.storePhone,
                     website: formData.storeWebsite,
+                    number: formData.storeNumber,
+                    vatNumber: formData.vatNumber,
                 },
                 orderNumber: formData.orderNumber,
+                transactionId: formData.transactionId,
+                paid: formData.paid || undefined,
                 date: formData.date,
                 time: formData.time,
                 cashier: formData.cashier,
@@ -967,7 +977,11 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
                     instagram: formData.socialMediaInstagram,
                     twitter: formData.socialMediaTwitter
                 },
-                surveyCode: formData.surveyCode,
+                survey: {
+                    code: formData.surveyCode,
+                    url: formData.surveyUrl,
+                    info: formData.surveyInfo,
+                },
                 info: [
                     formData.infoLine1,
                     formData.infoLine2,
@@ -1195,7 +1209,7 @@ export default function Builder({ serverUrl }: { serverUrl: string }) {
             // Apply buffer of 2px for potential 2px border on receipt
             iframe.style.height = (iframe.contentWindow.document.body.children[0].scrollHeight + 2) + 'px';
             iframe.style.width = (iframe.contentWindow.document.body.children[0].clientWidth + 2) + 'px';
-            for (const ms of [500, 1000, 2000]) {
+            for (const ms of [0, 10, 50, 100, 500, 2000]) {
                 setTimeout(() => {
                     iframe.style.height = (iframe.contentWindow.document.body.children[0].scrollHeight + 2) + 'px';
                     iframe.style.width = (iframe.contentWindow.document.body.children[0].clientWidth + 2) + 'px';

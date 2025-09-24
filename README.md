@@ -4,9 +4,8 @@ An ultra-realistic receipt generator.
 
 Outputs <b>PNG</b>, <b>JPEG</b>, <b>PDF</b>, and raw <b>HTML</b> with inline styling. Easily embedded into any website or email.
 
-
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/429986fc-d4ea-4f5c-a79c-48ce8e76649f" />
+  <img src="https://github.com/user-attachments/assets/2119d544-b54a-4590-99c4-d9a0d75eadac" />
 </div>
 
 ## Getting Started
